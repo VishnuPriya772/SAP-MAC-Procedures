@@ -6,6 +6,7 @@ ALTER PROCEDURE [dbo].[UpdateApprovalStatusForInwards]
     @Inward_ID INT,
     @UserID INT,
     @RoleID INT,
+    @Employee_ID Varchar(100),
     @Approver_Comment VARCHAR(500)
 AS
 BEGIN
@@ -20,8 +21,8 @@ BEGIN
     IF @InwardType = 'D'
     BEGIN
         UPDATE Trn_Inward_Old_Invoice
-        SET Approver_1 = @RoleID
-        WHERE Inward_ID = @Inward_ID AND Approver_1 IS NULL;
+        SET Approver_1 = @Employee_ID
+        WHERE Inward_ID = @Inward_ID 
 
         IF EXISTS (
             SELECT 1 FROM Trn_Inward_Old_Invoice
@@ -44,6 +45,7 @@ BEGIN
         BEGIN
             UPDATE Trn_Inward_Old_Invoice
             SET 
+            Approver_2 = @Employee_ID,
                 Approval2_Status = 'Approved',
                 Approver2_Comment = @Approver_Comment,
                 Modified_By = @UserID,
@@ -58,7 +60,7 @@ BEGIN
     ELSE IF @InwardType = 's'
     BEGIN
         UPDATE Trn_Inward_Old_Invoice
-        SET Approver_1 = @RoleID
+        SET Approver_1 = @Employee_ID
         WHERE Inward_ID = @Inward_ID 
 
         IF EXISTS (
@@ -67,7 +69,7 @@ BEGIN
         )
         BEGIN
             UPDATE Trn_Inward_Old_Invoice
-            SET 
+            SET Approver_1 = @Employee_ID,
                 Approval1_Status = 'Approved',
                 Approval2_Status = 'Waiting',
                 Status = 'Level1 Approved',
@@ -83,6 +85,7 @@ BEGIN
         BEGIN
             UPDATE Trn_Inward_Old_Invoice
             SET 
+            Approver_2 = @Employee_ID,
                 Approval2_Status = 'Approved',
                 Approval3_Status = 'Waiting',
                 Status = 'Level2 Approved',
@@ -98,6 +101,7 @@ BEGIN
         BEGIN
             UPDATE Trn_Inward_Old_Invoice
             SET 
+                  Approver_3 = @Employee_ID,
                 Approval3_Status = 'Approved',
                 Status = 'Level3 Approved',
                 Approver3_Comment = @Approver_Comment,
@@ -113,7 +117,7 @@ BEGIN
     ELSE IF @InwardType = 'E'
     BEGIN
         UPDATE Trn_Inward_Old_Invoice
-        SET Approver_1 = @RoleID
+        SET Approver_1 = @Employee_ID
         WHERE Inward_ID = @Inward_ID ;
         IF EXISTS (
             SELECT 1 FROM Trn_Inward_Old_Invoice
@@ -122,6 +126,7 @@ BEGIN
         BEGIN
             UPDATE Trn_Inward_Old_Invoice
             SET 
+            Approver_1 = @Employee_ID, 
                 Approval1_Status = 'Approved',
                 Approval2_Status = 'Waiting',
                 Status = 'Level1 Approved',
@@ -137,6 +142,7 @@ BEGIN
         BEGIN
             UPDATE Trn_Inward_Old_Invoice
             SET 
+            Approver_2 = @Employee_ID,
                 Approval2_Status = 'Approved',
                 Approval3_Status = 'Waiting',
                 Status = 'Level2 Approved',
@@ -152,6 +158,7 @@ BEGIN
         BEGIN
             UPDATE Trn_Inward_Old_Invoice
             SET 
+                Approver_3 = @Employee_ID,
                 Approval3_Status = 'Approved',
                 Status = 'Level3 Approved',
                 Approver3_Comment = @Approver_Comment,
