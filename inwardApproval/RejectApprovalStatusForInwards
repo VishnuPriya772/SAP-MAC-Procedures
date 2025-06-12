@@ -1,0 +1,160 @@
+alter PROCEDURE [dbo].[RejectApprovalStatusForInwards]
+    @Inward_ID INT,
+    @UserID INT,
+    @RoleID INT,
+    @Approver_Comment VARCHAR(500)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @InwardType VARCHAR(10);
+    SELECT @InwardType = Inward_Type FROM Trn_Inward_Old_Invoice WHERE Inward_ID = @Inward_ID;
+
+    --------------------
+    -- Purchase ('D') --
+    --------------------
+    IF @InwardType = 'D'
+    BEGIN
+        UPDATE Trn_Inward_Old_Invoice
+        SET Approver_1 = @RoleID
+        WHERE Inward_ID = @Inward_ID ;
+
+        IF EXISTS (
+            SELECT 1 FROM Trn_Inward_Old_Invoice
+            WHERE Inward_ID = @Inward_ID AND Approval1_Status = 'Waiting'
+        )
+        BEGIN
+            UPDATE Trn_Inward_Old_Invoice
+            SET 
+                Approval1_Status = 'Rejected',
+                Status = 'Rejected',
+                Approver1_Comment = @Approver_Comment,
+                Modified_By = @UserID,
+                Modified_On = GETDATE()
+            WHERE Inward_ID = @Inward_ID;
+        END
+        ELSE IF EXISTS (
+            SELECT 1 FROM Trn_Inward_Old_Invoice
+            WHERE Inward_ID = @Inward_ID AND Approval1_Status = 'Approved' AND Approval2_Status = 'Waiting'
+        )
+        BEGIN
+            UPDATE Trn_Inward_Old_Invoice
+            SET 
+                Approval2_Status = 'Rejected',
+                Approver2_Comment = @Approver_Comment,
+                Modified_By = @UserID,
+                Modified_On = GETDATE()
+            WHERE Inward_ID = @Inward_ID;
+        END
+    END
+
+    ------------------
+    -- Service ('s') --
+    ------------------
+    ELSE IF @InwardType = 's'
+    BEGIN
+        UPDATE Trn_Inward_Old_Invoice
+        SET Approver_1 = @RoleID
+        WHERE Inward_ID = @Inward_ID 
+
+        IF EXISTS (
+            SELECT 1 FROM Trn_Inward_Old_Invoice
+            WHERE Inward_ID = @Inward_ID AND Approval1_Status = 'Waiting'
+        )
+        BEGIN
+            UPDATE Trn_Inward_Old_Invoice
+            SET 
+                Approval1_Status = 'Rejected',
+               -- Approval2_Status = 'Waiting',
+                Status = 'Level1 Rejected',
+                Approver1_Comment = @Approver_Comment,
+                Modified_By = @UserID,
+                Modified_On = GETDATE()
+            WHERE Inward_ID = @Inward_ID;
+        END
+        ELSE IF EXISTS (
+            SELECT 1 FROM Trn_Inward_Old_Invoice
+            WHERE Inward_ID = @Inward_ID AND Approval1_Status = 'Approved' AND Approval2_Status = 'Waiting'
+        )
+        BEGIN
+            UPDATE Trn_Inward_Old_Invoice
+            SET 
+                Approval2_Status = 'Rejected',
+                --Approval3_Status = 'Waiting',
+                Status = 'Level2 Rejected',
+                Approver2_Comment = @Approver_Comment,
+                Modified_By = @UserID,
+                Modified_On = GETDATE()
+            WHERE Inward_ID = @Inward_ID;
+        END
+        ELSE IF EXISTS (
+            SELECT 1 FROM Trn_Inward_Old_Invoice
+            WHERE Inward_ID = @Inward_ID AND Approval2_Status = 'Approved' AND Approval3_Status = 'Waiting'
+        )
+        BEGIN
+            UPDATE Trn_Inward_Old_Invoice
+            SET 
+                Approval3_Status = 'Rejected',
+                Status = 'Level3 Rejected',
+                Approver3_Comment = @Approver_Comment,
+                Modified_By = @UserID,
+                Modified_On = GETDATE()
+            WHERE Inward_ID = @Inward_ID;
+        END
+    END
+
+    ------------------------
+    -- Engineering ('E') --
+    ------------------------
+    ELSE IF @InwardType = 'E'
+    BEGIN
+        UPDATE Trn_Inward_Old_Invoice
+        SET Approver_1 = @RoleID
+        WHERE Inward_ID = @Inward_ID ;
+        IF EXISTS (
+            SELECT 1 FROM Trn_Inward_Old_Invoice
+            WHERE Inward_ID = @Inward_ID AND Approval1_Status = 'Waiting'
+        )
+        BEGIN
+            UPDATE Trn_Inward_Old_Invoice
+            SET 
+                Approval1_Status = 'Rejected',
+                Approval2_Status = 'Waiting',
+                Status = 'Level1 Rejected',
+                Approver1_Comment = @Approver_Comment,
+                Modified_By = @UserID,
+                Modified_On = GETDATE()
+            WHERE Inward_ID = @Inward_ID;
+        END
+        ELSE IF EXISTS (
+            SELECT 1 FROM Trn_Inward_Old_Invoice
+            WHERE Inward_ID = @Inward_ID AND Approval1_Status = 'Approved' AND Approval2_Status = 'Waiting'
+        )
+        BEGIN
+            UPDATE Trn_Inward_Old_Invoice
+            SET 
+                Approval2_Status = 'Rejected',
+                Approval3_Status = 'Waiting',
+                Status = 'Level2 Rejected',
+                Approver2_Comment = @Approver_Comment,
+                Modified_By = @UserID,
+                Modified_On = GETDATE()
+            WHERE Inward_ID = @Inward_ID;
+        END
+        ELSE IF EXISTS (
+            SELECT 1 FROM Trn_Inward_Old_Invoice
+            WHERE Inward_ID = @Inward_ID AND Approval2_Status = 'Approved' AND Approval3_Status = 'Waiting'
+        )
+        BEGIN
+            UPDATE Trn_Inward_Old_Invoice
+            SET 
+                Approval3_Status = 'Rejected',
+                Status = 'Level3 Rejected',
+                Approver3_Comment = @Approver_Comment,
+                Modified_By = @UserID,
+                Modified_On = GETDATE()
+            WHERE Inward_ID = @Inward_ID;
+        END
+    END
+END
+GO
