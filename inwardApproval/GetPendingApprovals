@@ -1,8 +1,4 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-ALTER PROCEDURE [dbo].[GetPendingApprovals]
+ALTER PROCEDURE GetPendingApprovals
     @RoleID VARCHAR(50)
 AS
 BEGIN
@@ -12,19 +8,27 @@ BEGIN
     FROM Trn_Inward_Old_Invoice
     WHERE 
         (
-            -- For Inward_Type = 'D'
+            -- For Inward_Type = 'D' (Purchase)
             (Inward_Type = 'D' AND Approval1_Status = 'Waiting' AND @RoleID = '7')
             OR
             (Inward_Type = 'D' AND Approval2_Status = 'Waiting' AND @RoleID IN ('6', '10'))
         )
         OR
         (
-            -- For Inward_Type = 'S'
+            -- For Inward_Type = 'S' (Service)
             (Inward_Type = 'S' AND Approval1_Status = 'Waiting' AND @RoleID = '3')
             OR
             (Inward_Type = 'S' AND Approval2_Status = 'Waiting' AND @RoleID = '7')
             OR
             (Inward_Type = 'S' AND Approval3_Status = 'Waiting' AND @RoleID = '6')
         )
+        OR
+        (
+            -- For Inward_Type = 'E' (Engineering) — same role logic as 'S'
+            (Inward_Type = 'E' AND Approval1_Status = 'Waiting' AND @RoleID = '4')
+            OR
+            (Inward_Type = 'E' AND Approval2_Status = 'Waiting' AND @RoleID = '3')
+            OR
+            (Inward_Type = 'E' AND Approval3_Status = 'Waiting' AND @RoleID = '5')
+        )
 END;
-GO
