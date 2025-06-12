@@ -1,3 +1,7 @@
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 ALTER PROCEDURE [dbo].[UpdateApprovalStatusForInwards]
     @Inward_ID INT,
     @UserID INT,
@@ -55,7 +59,7 @@ BEGIN
     BEGIN
         UPDATE Trn_Inward_Old_Invoice
         SET Approver_1 = @RoleID
-        WHERE Inward_ID = @Inward_ID AND Approver_1 IS NULL;
+        WHERE Inward_ID = @Inward_ID 
 
         IF EXISTS (
             SELECT 1 FROM Trn_Inward_Old_Invoice
@@ -110,8 +114,7 @@ BEGIN
     BEGIN
         UPDATE Trn_Inward_Old_Invoice
         SET Approver_1 = @RoleID
-        WHERE Inward_ID = @Inward_ID AND Approver_1 IS NULL;
-
+        WHERE Inward_ID = @Inward_ID ;
         IF EXISTS (
             SELECT 1 FROM Trn_Inward_Old_Invoice
             WHERE Inward_ID = @Inward_ID AND Approval1_Status = 'Waiting'
