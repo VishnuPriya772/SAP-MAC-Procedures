@@ -1,4 +1,4 @@
-create PROCEDURE [dbo].[UpdateL2Approver]
+Alter PROCEDURE [dbo].[UpdateL2Approver]
     @Inward_ID INT,
     @UserID INT,
     @RoleID INT,
@@ -22,6 +22,7 @@ BEGIN
         UPDATE Trn_Inward_Old_Invoice
         SET 
             Approval1_Status = 'Approved',
+			 Approval2_Status = 'Waiting',
             Approver_1 = @Employee_ID,
             Approver_2 = @Approver2,
             Status = 'L2.Pending',
