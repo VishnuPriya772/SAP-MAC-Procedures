@@ -46,6 +46,7 @@ BEGIN
             UPDATE Trn_Inward_Old_Invoice
             SET 
             Approver_2 = @Employee_ID,
+            Status='Approved',
                 Approval2_Status = 'Approved',
                 Approver2_Comment = @Approver_Comment,
                 Modified_By = @UserID,
@@ -72,7 +73,7 @@ BEGIN
             SET Approver_1 = @Employee_ID,
                 Approval1_Status = 'Approved',
                 Approval2_Status = 'Waiting',
-                Status = 'Level1 Approved',
+                Status = 'Level2 Pending',
                 Approver1_Comment = @Approver_Comment,
                 Modified_By = @UserID,
                 Modified_On = GETDATE()
@@ -88,7 +89,7 @@ BEGIN
             Approver_2 = @Employee_ID,
                 Approval2_Status = 'Approved',
                 Approval3_Status = 'Waiting',
-                Status = 'Level2 Approved',
+                Status = 'Level3 Pending',
                 Approver2_Comment = @Approver_Comment,
                 Modified_By = @UserID,
                 Modified_On = GETDATE()
@@ -129,7 +130,7 @@ BEGIN
             Approver_1 = @Employee_ID, 
                 Approval1_Status = 'Approved',
                 Approval2_Status = 'Waiting',
-                Status = 'Level1 Approved',
+                Status = 'Level2 Pending',
                 Approver1_Comment = @Approver_Comment,
                 Modified_By = @UserID,
                 Modified_On = GETDATE()
@@ -145,7 +146,7 @@ BEGIN
             Approver_2 = @Employee_ID,
                 Approval2_Status = 'Approved',
                 Approval3_Status = 'Waiting',
-                Status = 'Level2 Approved',
+                Status = 'Level3 Pending',
                 Approver2_Comment = @Approver_Comment,
                 Modified_By = @UserID,
                 Modified_On = GETDATE()
