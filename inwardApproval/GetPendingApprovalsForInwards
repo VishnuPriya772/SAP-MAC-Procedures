@@ -1,4 +1,4 @@
-ALTER PROCEDURE GetPendingApprovals
+create PROCEDURE GetPendingApprovalsForInwards
     @RoleID VARCHAR(50)
 AS
 BEGIN
