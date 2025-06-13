@@ -1,11 +1,18 @@
-create PROCEDURE GetPendingApprovalsForInwards
+Alter PROCEDURE GetPendingApprovalsForInwards
     @RoleID VARCHAR(50)
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    SELECT * 
-    FROM Trn_Inward_Old_Invoice
+    SELECT   i.Inward_ID, i.Vendor_ID, v.Vendor_Code, v.Vendor_Name,
+            FORMAT(i.Invoice_Date, 'dd-MM-yyyy') AS Invoice_Date,
+            i.Invoice_No, i.Invoice_Qty, i.Invoice_Value, i.Purchase_Order,
+            i.Material_ID, m.Material_Code, i.Monthly_Scheduled_Qty, i.Current_Stock,
+            i.Reason_For_Delay, i.Inward_Type, i.Status, u.Plant_ID
+        FROM Trn_Inward_Old_Invoice i
+        INNER JOIN Mst_Vendor v ON i.Vendor_ID = v.Vendor_ID
+        INNER JOIN Mst_Material m ON i.Material_ID = m.Material_ID
+        INNER JOIN Mst_User u ON i.Created_By = u.User_ID
     WHERE 
         (
             -- For Inward_Type = 'D' (Purchase)
