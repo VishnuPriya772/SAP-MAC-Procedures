@@ -1,0 +1,8 @@
+
+ create PROCEDURE GetEmployeeDetails
+ 
+AS
+BEGIN
+    SET NOCOUNT ON;
+	select Employee_ID ,USER_NAME,Role_ID from Mst_User where Role_ID IN(6 ,10)
+END;
