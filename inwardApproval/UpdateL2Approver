@@ -1,0 +1,33 @@
+create PROCEDURE [dbo].[UpdateL2Approver]
+    @Inward_ID INT,
+    @UserID INT,
+    @RoleID INT,
+    @Employee_ID VARCHAR(100),   -- Logged-in approver (L1)
+    @Approver2 VARCHAR(100),     -- Next level approver (L2)
+    @Approver_Comment VARCHAR(500)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @InwardType VARCHAR(10);
+
+    -- Get the Inward Type
+    SELECT @InwardType = Inward_Type 
+    FROM Trn_Inward_Old_Invoice 
+    WHERE Inward_ID = @Inward_ID;
+
+    -- Only handle if it's a Purchase Inward (D)
+    IF @InwardType = 'D'
+    BEGIN
+        UPDATE Trn_Inward_Old_Invoice
+        SET 
+            Approval1_Status = 'Approved',
+            Approver_1 = @Employee_ID,
+            Approver_2 = @Approver2,
+            Status = 'L2.Pending',
+            Approver1_Comment = @Approver_Comment,
+            Modified_By = @UserID,
+            Modified_On = GETDATE()
+        WHERE Inward_ID = @Inward_ID;
+    END
+END
