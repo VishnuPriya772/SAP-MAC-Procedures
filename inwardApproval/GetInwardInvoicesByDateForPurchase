@@ -39,6 +39,6 @@ BEGIN
     WHERE 
         i.Inward_Type = 'D'
         AND i.Created_By = @UserID
-        AND CAST(i.Invoice_Date AS DATE) BETWEEN @FromDate AND @ToDate
+        AND CAST(i.Created_On AS DATE) BETWEEN @FromDate AND @ToDate
         -- AND i.Status IN ('New', 'Rejected') -- Uncomment if needed
 END;
