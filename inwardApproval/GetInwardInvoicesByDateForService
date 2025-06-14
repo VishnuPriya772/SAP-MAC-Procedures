@@ -1,0 +1,33 @@
+CREATE PROCEDURE GetInwardInvoicesByDateForService
+    @UserID INT,
+    @FromDate DATE,
+    @ToDate DATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        i.Inward_ID,
+        i.Vendor_ID,
+        v.Vendor_Code,
+        v.Vendor_Name,
+      CONVERT(VARCHAR(10), i.Invoice_Date, 120) AS Invoice_Date, 
+        i.Invoice_No,
+        i.Invoice_Value,
+        i.Purchase_Order,
+        i.Reason_For_Delay,
+        i.Inward_Type,
+        i.Status,
+        u.Plant_ID
+    FROM 
+        Trn_Inward_Old_Invoice i
+    INNER JOIN 
+        Mst_Vendor v ON i.Vendor_ID = v.Vendor_ID
+    INNER JOIN 
+        Mst_User u ON i.Created_By = u.User_ID
+    WHERE 
+        i.Inward_Type = 'S'
+        AND i.Created_By = @UserID
+        AND i.Invoice_Date BETWEEN @FromDate AND @ToDate
+        -- AND i.Status IN ('New', 'Rejected') -- Uncomment if needed
+END;
