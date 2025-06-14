@@ -1,4 +1,4 @@
-CREATE PROCEDURE GetInwardInvoicesByDateForPurchase
+ALTER PROCEDURE GetInwardInvoicesByDateForPurchase
     @UserID INT,
     @FromDate DATE,
     @ToDate DATE
@@ -7,22 +7,23 @@ BEGIN
     SET NOCOUNT ON;
 
     SELECT i.Inward_ID ,
-	i.Vendor_ID,
+	
 	v.Vendor_Code,
 	v.Vendor_Name,
+    p.Plant_Code,
 	CONVERT(VARCHAR(10), i.Invoice_Date, 120) AS Invoice_Date,
 	i.Invoice_No,
 	i.Invoice_Qty,
 	i.Invoice_Value,
 	i.Purchase_Order,
-	i.Material_ID,
+	
 	m.Material_Code,
 	i.Monthly_Scheduled_Qty,
 	i.Current_Stock,
 	i.Reason_For_Delay,
 	i.Inward_Type,
-	i.Status,
-	u.Plant_ID
+	i.Status
+	
 	from Trn_Inward_Old_Invoice i
     INNER JOIN 
        Mst_Vendor v
@@ -30,12 +31,17 @@ BEGIN
        i.Vendor_ID = v.Vendor_ID
 	    INNER JOIN 
        Mst_Material m
+       
     ON 
        i.Material_ID = m.Material_ID
 	    INNER JOIN 
        Mst_User u
     ON 
        i.Created_By =u.User_ID
+       INNER JOIN 
+       Mst_Plant  p
+    ON 
+       i.Plant_ID =p.Plant_ID
     WHERE 
         i.Inward_Type = 'D'
         AND i.Created_By = @UserID
