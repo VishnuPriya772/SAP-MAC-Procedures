@@ -11,7 +11,8 @@ BEGIN
 	i.Vendor_ID,
 	v.Vendor_Code,
 	v.Vendor_Name,
-  Invoice_Date,
+ CONVERT(VARCHAR(10), i.Invoice_Date, 120) AS Invoice_Date,
+   ---FORMAT(i.Invoice_Date, 'dd-MM-yyyy') AS Invoice_Date,
 	i.Invoice_No,
 	
 	i.Invoice_Value,
@@ -33,7 +34,8 @@ BEGIN
        i.Created_By =u.User_ID
 
 
-	   where Inward_Type='S'And i.Created_By=@UserID AND i.Status IN('New','Rejected')
+	   where Inward_Type='S'And i.Created_By=@UserID 
+       ---AND i.Status IN('New','Rejected')
       
     
     
