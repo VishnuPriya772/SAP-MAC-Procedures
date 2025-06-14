@@ -21,7 +21,11 @@ BEGIN
         i.Invoice_Value,
         i.Purchase_Order,
         i.Reason_For_Delay,
-        i.Inward_Type,
+        CASE 
+        WHEN i.Inward_Type = 'S' THEN 'Service'
+        WHEN i.Inward_Type = 'D' THEN 'Purchase'
+        ELSE i.Inward_Type
+    END AS Inward_Type,
         i.Status,
     
     FROM 
