@@ -11,7 +11,7 @@ BEGIN
 	i.Vendor_ID,
 	v.Vendor_Code,
 	v.Vendor_Name,
-	  Invoice_Date,
+	CONVERT(VARCHAR(10), i.Invoice_Date, 120) AS Invoice_Date,
 	i.Invoice_No,
 	i.Invoice_Qty,
 	i.Invoice_Value,
