@@ -1,4 +1,8 @@
-CREATE PROCEDURE GetInwardInvoicesByDateForService
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[GetInwardInvoicesByDateForService]
     @UserID INT,
     @FromDate DATE,
     @ToDate DATE
@@ -28,6 +32,7 @@ BEGIN
     WHERE 
         i.Inward_Type = 'S'
         AND i.Created_By = @UserID
-        AND i.Invoice_Date BETWEEN @FromDate AND @ToDate
+       AND CAST(i.Invoice_Date AS DATE) BETWEEN @FromDate AND @ToDate
         -- AND i.Status IN ('New', 'Rejected') -- Uncomment if needed
 END;
+GO
