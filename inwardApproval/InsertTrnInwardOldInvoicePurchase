@@ -1,0 +1,73 @@
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[InsertTrnInwardOldInvoicePurchase]    Script Date: 16-06-2025 14:21:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER PROCEDURE [dbo].[InsertTrnInwardOldInvoicePurchase]
+    @Vendor_ID INT,
+    @Invoice_Date DATE,
+    @Invoice_No VARCHAR(50),
+    @Invoice_Qty INT,
+    @Invoice_Value INT,
+    @Purchase_Order VARCHAR(50),
+    @Material_ID INT,
+    @Monthly_Scheduled_Qty INT,
+    @Current_Stock INT,
+    @Reason_For_Delay VARCHAR(255),
+    @Plant_ID INT,
+    @UserID VARCHAR(50)
+AS
+BEGIN
+    INSERT INTO Trn_Inward_Old_Invoice (
+        Vendor_ID,
+        Plant_ID,
+        Invoice_Date,
+        Invoice_No,
+        Invoice_Qty,
+        Invoice_Value,
+        Purchase_Order,
+        Material_ID,
+        Monthly_Scheduled_Qty,
+        Current_Stock,
+        Reason_For_Delay,
+        Inward_Type,
+        Status,
+        Created_By,
+        Created_On,
+        Approval1_Status,
+        Approval2_Status,
+        Approval3_Status,
+        Approver_1,
+		Approver_2,
+		Approver_3
+    )
+    VALUES (
+        @Vendor_ID,
+        @Plant_ID,
+        @Invoice_Date,
+        @Invoice_No,
+        @Invoice_Qty,
+        @Invoice_Value,
+        @Purchase_Order,
+        @Material_ID,
+        @Monthly_Scheduled_Qty,
+        @Current_Stock,
+        @Reason_For_Delay,
+        'D',
+        'New',
+        @UserID,
+        GETDATE(),
+        'Waiting',   -- Approval1_Status
+        'NA',        -- Approval2_Status
+        'NA',        -- Approval3_Status
+       'NA'  ,         -- Approver_1
+		'NA',
+		'NA'
+		
+    );
+
+    SELECT 'Invoice record inserted successfully' AS Message;
+END;
