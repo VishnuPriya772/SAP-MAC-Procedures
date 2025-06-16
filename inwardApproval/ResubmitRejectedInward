@@ -1,0 +1,63 @@
+CREATE PROCEDURE [dbo].[ResubmitRejectedInward]
+    @Inward_ID INT,
+    @Modified_By INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Check which approval level was rejected
+    DECLARE @Approval1_Status VARCHAR(20),
+            @Approval2_Status VARCHAR(20),
+            @Approval3_Status VARCHAR(20),
+            @NewStatus VARCHAR(50);
+
+    SELECT 
+        @Approval1_Status = Approval1_Status,
+        @Approval2_Status = Approval2_Status,
+        @Approval3_Status = Approval3_Status
+    FROM Trn_Inward_Old_Invoice
+    WHERE Inward_ID = @Inward_ID;
+
+    -- Determine which level was rejected and needs to be reset
+    IF @Approval1_Status = 'Rejected'
+    BEGIN
+        SET @NewStatus = 'Level1 Pending';
+
+        UPDATE Trn_Inward_Old_Invoice
+        SET 
+            Approval1_Status = 'Waiting',
+            Status = @NewStatus,
+            Modified_By = @Modified_By,
+            Modified_On = GETDATE()
+        WHERE Inward_ID = @Inward_ID;
+    END
+    ELSE IF @Approval2_Status = 'Rejected'
+    BEGIN
+        SET @NewStatus = 'Level2 Pending';
+
+        UPDATE Trn_Inward_Old_Invoice
+        SET 
+            Approval2_Status = 'Waiting',
+            Status = @NewStatus,
+            Modified_By = @Modified_By,
+            Modified_On = GETDATE()
+        WHERE Inward_ID = @Inward_ID;
+    END
+    ELSE IF @Approval3_Status = 'Rejected'
+    BEGIN
+        SET @NewStatus = 'Level3 Pending';
+
+        UPDATE Trn_Inward_Old_Invoice
+        SET 
+            Approval3_Status = 'Waiting',
+            Status = @NewStatus,
+            Modified_By = @Modified_By,
+            Modified_On = GETDATE()
+        WHERE Inward_ID = @Inward_ID;
+    END
+    ELSE
+    BEGIN
+        -- No rejected status found
+        RAISERROR('No rejected status found for the given Inward_ID.', 16, 1);
+    END
+END
