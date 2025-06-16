@@ -1,0 +1,63 @@
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[InsertTrnEmergencyProcurment]    Script Date: 16-06-2025 16:24:13 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[InsertTrnEmergencyProcurment]
+    @Vendor_ID INT,
+   
+    @Invoice_Qty INT,
+   @Purchase_Order VARCHAR(255),
+   @Invoice_Value INT,
+    @Reason_For_Delay VARCHAR(255),
+    @Plant_ID INT,
+    @Material_Description VARCHAR(255),
+    @UserID VARCHAR(50)
+AS
+BEGIN
+    INSERT INTO Trn_Inward_Old_Invoice (
+        Vendor_ID,
+		Plant_ID,
+       
+        Invoice_Qty,
+		Purchase_Order,
+        Invoice_Value,
+       Material_Description,
+        Reason_For_Delay,
+        Inward_Type,
+        Status,
+        Created_By,
+        Created_On,
+		 Approval1_Status,
+        Approval2_Status,
+        Approval3_Status,
+		Approver_1,
+		Approver_2,
+		Approver_3
+    )
+    VALUES (
+        @Vendor_ID,
+		@Plant_ID,
+      
+        @Invoice_Qty,
+  
+       @Purchase_Order,
+	   @Invoice_Value,
+        @Material_Description,
+        @Reason_For_Delay,
+        'E',
+        'New',
+        @UserID,
+        GETDATE(),
+		'Waiting',        -- Approval1_Status
+        'NA',             -- Approval2_Status
+        'NA'  ,-- Approval3_Status
+		 'NA',
+		 'NA',
+		 'NA'
+    );
+
+    SELECT 'Invoice record inserted successfully' AS Message;
+END;
