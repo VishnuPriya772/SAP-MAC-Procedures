@@ -1,0 +1,64 @@
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[GetPendingApprovalsForInwards]    Script Date: 16-06-2025 18:04:51 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+create PROCEDURE [dbo].[GetPendingApprovalsForInwardsForApproverPage]
+    @RoleID VARCHAR(50),
+    @Plant_ID INT,
+    @Employee_ID VARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        i.Inward_ID,
+        i.Vendor_ID,
+        v.Vendor_Code,
+        v.Vendor_Name,
+        FORMAT(i.Invoice_Date, 'dd-MM-yyyy') AS Invoice_Date,
+        i.Invoice_No,
+        i.Invoice_Qty,
+        i.Invoice_Value,
+        i.Purchase_Order,
+        i.Material_ID,
+        m.Material_Code,
+        i.Monthly_Scheduled_Qty,
+        i.Current_Stock,
+        i.Reason_For_Delay,
+        CASE 
+            WHEN i.Inward_Type = 'S' THEN 'Service'
+            WHEN i.Inward_Type = 'D' THEN 'Purchase'
+          
+            ELSE i.Inward_Type
+        END AS Inward_Type,
+        i.Status,
+        u.Plant_ID
+    FROM Trn_Inward_Old_Invoice i
+    INNER JOIN Mst_Vendor v ON i.Vendor_ID = v.Vendor_ID
+    LEFT JOIN Mst_Material m ON i.Material_ID = m.Material_ID
+    INNER JOIN Mst_User u ON i.Created_By = u.User_ID
+    WHERE 
+    (
+        -- ✅ Purchase Logic
+        LTRIM(RTRIM(i.Inward_Type)) = 'D' AND (
+            (i.Approval1_Status = 'Waiting' AND @RoleID = '7')
+            OR
+            (i.Approval2_Status = 'Waiting' AND i.Approver_2 = @Employee_ID AND @RoleID IN ('6', '10'))
+        )
+    )
+    OR
+    (
+        -- ✅ Service Logic
+        LTRIM(RTRIM(i.Inward_Type)) = 'S' AND (
+            (i.Approval1_Status = 'Waiting' AND @RoleID = '3' AND i.Plant_ID = @Plant_ID)
+            OR
+            (i.Approval2_Status = 'Waiting' AND @RoleID = '7')
+            OR
+            (i.Approval3_Status = 'Waiting' AND @RoleID = '6')
+        )
+    )
+   
+END;
