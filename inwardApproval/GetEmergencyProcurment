@@ -1,0 +1,42 @@
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[GetEmergencyProcurment]    Script Date: 16-06-2025 09:26:47 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER PROCEDURE [dbo].[GetEmergencyProcurment]
+@UserID Varchar(50)
+AS
+BEGIN
+       SELECT i.Inward_ID ,
+	i.Vendor_ID,
+	v.Vendor_Code,
+	v.Vendor_Name,
+	
+	
+	i.Material_Description,
+	i.Invoice_Qty,
+	
+	i.Invoice_Value,i.Purchase_Order,
+	
+	i.Reason_For_Delay,
+	i.Inward_Type,
+	i.Status,
+	u.Plant_ID
+	from Trn_Inward_Old_Invoice i
+    INNER JOIN 
+       Mst_Vendor v
+    ON 
+       i.Vendor_ID = v.Vendor_ID
+	   
+	    INNER JOIN 
+       Mst_User u
+    ON 
+       i.Created_By =u.User_ID
+
+
+	   where Inward_Type='E' And i.Created_By=@UserID  AND i.Status !='Approved'
+    
+END;
