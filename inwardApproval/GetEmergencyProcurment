@@ -1,6 +1,6 @@
 USE [Sap_Approval]
 GO
-/****** Object:  StoredProcedure [dbo].[GetEmergencyProcurment]    Script Date: 16-06-2025 09:26:47 ******/
+/****** Object:  StoredProcedure [dbo].[GetEmergencyProcurment]    Script Date: 16-06-2025 16:16:08 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -23,8 +23,8 @@ BEGIN
 	
 	i.Reason_For_Delay,
 	i.Inward_Type,
-	i.Status,
-	u.Plant_ID
+	  i.Status,i.Approval1_Status,i.Approval2_Status,i.Approval3_Status,i.Approver_1,i.Approver_2,i.Approver_3,i.Approver1_Comment,i.Approver2_Comment,i.Approver3_Comment
+	
 	from Trn_Inward_Old_Invoice i
     INNER JOIN 
        Mst_Vendor v
