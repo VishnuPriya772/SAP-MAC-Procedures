@@ -1,3 +1,6 @@
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[GetPurchaseDetails]    Script Date: 16-06-2025 14:13:54 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7,23 +10,24 @@ ALTER PROCEDURE [dbo].[GetPurchaseDetails]
 @UserID Varchar(50)
 AS
 BEGIN
-    SELECT i.Inward_ID ,
-	i.Vendor_ID,
+   SELECT i.Inward_ID ,
+	
 	v.Vendor_Code,
 	v.Vendor_Name,
+    p.Plant_Code,
 	CONVERT(VARCHAR(10), i.Invoice_Date, 120) AS Invoice_Date,
 	i.Invoice_No,
 	i.Invoice_Qty,
 	i.Invoice_Value,
 	i.Purchase_Order,
-	i.Material_ID,
+	
 	m.Material_Code,
 	i.Monthly_Scheduled_Qty,
 	i.Current_Stock,
 	i.Reason_For_Delay,
 	i.Inward_Type,
-	i.Status,
-	u.Plant_ID
+	i.Status,i.Approval1_Status,i.Approval2_Status,i.Approval3_Status,i.Approver_1,i.Approver_2,i.Approver_3,i.Approver1_Comment,i.Approver2_Comment,i.Approver3_Comment
+	
 	from Trn_Inward_Old_Invoice i
     INNER JOIN 
        Mst_Vendor v
@@ -31,14 +35,18 @@ BEGIN
        i.Vendor_ID = v.Vendor_ID
 	    INNER JOIN 
        Mst_Material m
+       
     ON 
        i.Material_ID = m.Material_ID
 	    INNER JOIN 
        Mst_User u
     ON 
        i.Created_By =u.User_ID
+       INNER JOIN 
+       Mst_Plant  p
+    ON 
+       i.Plant_ID =p.Plant_ID
 
-	   where i.Inward_Type='D'And i.Created_By=@UserID  AND i.Status IN('New','Rejected')
+	   where i.Inward_Type='D'And i.Created_By=@UserID  AND i.Status !='Approved'
     
 END;
-GO
