@@ -1,12 +1,8 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 ALTER PROCEDURE [dbo].[UpdateApprovalStatusForInwards]
     @Inward_ID INT,
     @UserID INT,
     @RoleID INT,
-    @Employee_ID Varchar(100),
+    @Employee_ID VARCHAR(100),
     @Approver_Comment VARCHAR(500)
 AS
 BEGIN
@@ -15,22 +11,14 @@ BEGIN
     DECLARE @InwardType VARCHAR(10);
     SELECT @InwardType = Inward_Type FROM Trn_Inward_Old_Invoice WHERE Inward_ID = @Inward_ID;
 
-    --------------------
-    -- Purchase ('D') --
-    --------------------
+    -- Purchase (D)
     IF @InwardType = 'D'
     BEGIN
-        UPDATE Trn_Inward_Old_Invoice
-        SET Approver_1 = @Employee_ID
-        WHERE Inward_ID = @Inward_ID 
-
-        IF EXISTS (
-            SELECT 1 FROM Trn_Inward_Old_Invoice
-            WHERE Inward_ID = @Inward_ID AND Approval1_Status = 'Waiting'
-        )
+        IF EXISTS (SELECT 1 FROM Trn_Inward_Old_Invoice WHERE Inward_ID = @Inward_ID AND Approval1_Status = 'Waiting')
         BEGIN
             UPDATE Trn_Inward_Old_Invoice
             SET 
+                Approver_1 = @Employee_ID,
                 Approval1_Status = 'Approved',
                 Status = 'Approved',
                 Approver1_Comment = @Approver_Comment,
@@ -38,16 +26,13 @@ BEGIN
                 Modified_On = GETDATE()
             WHERE Inward_ID = @Inward_ID;
         END
-        ELSE IF EXISTS (
-            SELECT 1 FROM Trn_Inward_Old_Invoice
-            WHERE Inward_ID = @Inward_ID AND Approval1_Status = 'Approved' AND Approval2_Status = 'Waiting'
-        )
+        ELSE IF EXISTS (SELECT 1 FROM Trn_Inward_Old_Invoice WHERE Inward_ID = @Inward_ID AND Approval1_Status = 'Approved' AND Approval2_Status = 'Waiting')
         BEGIN
             UPDATE Trn_Inward_Old_Invoice
             SET 
-            Approver_2 = @Employee_ID,
-            Status='Approved',
+                Approver_2 = @Employee_ID,
                 Approval2_Status = 'Approved',
+                Status = 'Approved',
                 Approver2_Comment = @Approver_Comment,
                 Modified_By = @UserID,
                 Modified_On = GETDATE()
@@ -55,22 +40,14 @@ BEGIN
         END
     END
 
-    ------------------
-    -- Service ('s') --
-    ------------------
+    -- Service (s)
     ELSE IF @InwardType = 's'
     BEGIN
-        UPDATE Trn_Inward_Old_Invoice
-        SET Approver_1 = @Employee_ID
-        WHERE Inward_ID = @Inward_ID 
-
-        IF EXISTS (
-            SELECT 1 FROM Trn_Inward_Old_Invoice
-            WHERE Inward_ID = @Inward_ID AND Approval1_Status = 'Waiting'
-        )
+        IF EXISTS (SELECT 1 FROM Trn_Inward_Old_Invoice WHERE Inward_ID = @Inward_ID AND Approval1_Status = 'Waiting')
         BEGIN
             UPDATE Trn_Inward_Old_Invoice
-            SET Approver_1 = @Employee_ID,
+            SET 
+                Approver_1 = @Employee_ID,
                 Approval1_Status = 'Approved',
                 Approval2_Status = 'Waiting',
                 Status = 'Level2 Pending',
@@ -79,14 +56,11 @@ BEGIN
                 Modified_On = GETDATE()
             WHERE Inward_ID = @Inward_ID;
         END
-        ELSE IF EXISTS (
-            SELECT 1 FROM Trn_Inward_Old_Invoice
-            WHERE Inward_ID = @Inward_ID AND Approval1_Status = 'Approved' AND Approval2_Status = 'Waiting'
-        )
+        ELSE IF EXISTS (SELECT 1 FROM Trn_Inward_Old_Invoice WHERE Inward_ID = @Inward_ID AND Approval2_Status = 'Waiting')
         BEGIN
             UPDATE Trn_Inward_Old_Invoice
             SET 
-            Approver_2 = @Employee_ID,
+                Approver_2 = @Employee_ID,
                 Approval2_Status = 'Approved',
                 Approval3_Status = 'Waiting',
                 Status = 'Level3 Pending',
@@ -95,16 +69,13 @@ BEGIN
                 Modified_On = GETDATE()
             WHERE Inward_ID = @Inward_ID;
         END
-        ELSE IF EXISTS (
-            SELECT 1 FROM Trn_Inward_Old_Invoice
-            WHERE Inward_ID = @Inward_ID AND Approval2_Status = 'Approved' AND Approval3_Status = 'Waiting'
-        )
+        ELSE IF EXISTS (SELECT 1 FROM Trn_Inward_Old_Invoice WHERE Inward_ID = @Inward_ID AND Approval3_Status = 'Waiting')
         BEGIN
             UPDATE Trn_Inward_Old_Invoice
             SET 
-                  Approver_3 = @Employee_ID,
+                Approver_3 = @Employee_ID,
                 Approval3_Status = 'Approved',
-                Status = 'Level3 Approved',
+                Status = 'Approved',
                 Approver3_Comment = @Approver_Comment,
                 Modified_By = @UserID,
                 Modified_On = GETDATE()
@@ -112,22 +83,14 @@ BEGIN
         END
     END
 
-    ------------------------
-    -- Engineering ('E') --
-    ------------------------
+    -- Engineering (E)
     ELSE IF @InwardType = 'E'
     BEGIN
-        UPDATE Trn_Inward_Old_Invoice
-        SET Approver_1 = @Employee_ID
-        WHERE Inward_ID = @Inward_ID ;
-        IF EXISTS (
-            SELECT 1 FROM Trn_Inward_Old_Invoice
-            WHERE Inward_ID = @Inward_ID AND Approval1_Status = 'Waiting'
-        )
+        IF EXISTS (SELECT 1 FROM Trn_Inward_Old_Invoice WHERE Inward_ID = @Inward_ID AND Approval1_Status = 'Waiting')
         BEGIN
             UPDATE Trn_Inward_Old_Invoice
             SET 
-            Approver_1 = @Employee_ID, 
+                Approver_1 = @Employee_ID,
                 Approval1_Status = 'Approved',
                 Approval2_Status = 'Waiting',
                 Status = 'Level2 Pending',
@@ -136,14 +99,11 @@ BEGIN
                 Modified_On = GETDATE()
             WHERE Inward_ID = @Inward_ID;
         END
-        ELSE IF EXISTS (
-            SELECT 1 FROM Trn_Inward_Old_Invoice
-            WHERE Inward_ID = @Inward_ID AND Approval1_Status = 'Approved' AND Approval2_Status = 'Waiting'
-        )
+        ELSE IF EXISTS (SELECT 1 FROM Trn_Inward_Old_Invoice WHERE Inward_ID = @Inward_ID AND Approval2_Status = 'Waiting')
         BEGIN
             UPDATE Trn_Inward_Old_Invoice
             SET 
-            Approver_2 = @Employee_ID,
+                Approver_2 = @Employee_ID,
                 Approval2_Status = 'Approved',
                 Approval3_Status = 'Waiting',
                 Status = 'Level3 Pending',
@@ -152,16 +112,13 @@ BEGIN
                 Modified_On = GETDATE()
             WHERE Inward_ID = @Inward_ID;
         END
-        ELSE IF EXISTS (
-            SELECT 1 FROM Trn_Inward_Old_Invoice
-            WHERE Inward_ID = @Inward_ID AND Approval2_Status = 'Approved' AND Approval3_Status = 'Waiting'
-        )
+        ELSE IF EXISTS (SELECT 1 FROM Trn_Inward_Old_Invoice WHERE Inward_ID = @Inward_ID AND Approval3_Status = 'Waiting')
         BEGIN
             UPDATE Trn_Inward_Old_Invoice
             SET 
                 Approver_3 = @Employee_ID,
                 Approval3_Status = 'Approved',
-                Status = 'Level3 Approved',
+                Status = 'Approved',
                 Approver3_Comment = @Approver_Comment,
                 Modified_By = @UserID,
                 Modified_On = GETDATE()
@@ -169,4 +126,3 @@ BEGIN
         END
     END
 END
-GO
