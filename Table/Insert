@@ -1,0 +1,48 @@
+-- T20: Insert into Supervisor Master (Mst_SupvCode)
+INSERT INTO Mst_SupvCode (
+    Plant_ID,
+    Sup_Code,
+    Sup_Name,
+    Active_Status,
+    Created_By,
+    Created_On,
+    Modified_By,
+    Modified_On
+)
+VALUES (
+    -- Add values here
+    , '', '', 1,  -- Sup_Code, Sup_Name, Active_Status
+    , GETDATE(), , GETDATE()
+);
+-- T21: Insert into Module Master (Mst_Module)
+INSERT INTO Mst_Module (
+    Plant_ID,
+    Dept_ID,
+    Module_Name,
+    Created_By,
+    Created_On,
+    Modified_By,
+    Modified_On
+)
+VALUES (
+    -- Add values here
+    , , '',  -- Plant_ID, Dept_ID, Module_Name
+    , GETDATE(), , GETDATE()
+);
+-- T22: Insert into Line Master (Mst_Line)
+INSERT INTO Mst_Line (
+    Plant_ID,
+    Dept_ID,
+    Module_ID,
+    Line_Name,
+    Supv_ID,
+    Created_By,
+    Created_On,
+    Modified_By,
+    Modified_On
+)
+VALUES (
+    -- Add values here
+    , , , '', ,  -- Plant_ID, Dept_ID, Module_ID, Line_Name, Supv_ID
+    , GETDATE(), , GETDATE()
+);
