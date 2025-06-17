@@ -1,0 +1,8 @@
+SELECT*FROM MST_ROLE
+SELECT*FROM Mst_User
+
+SELECT*FROM Trn_Inward_Old_Invoice
+truncate table Trn_Inward_Old_Invoice
+
+
+update  Trn_Inward_Old_Invoice set  approver_1='cmrp01' where inward_Id=1
