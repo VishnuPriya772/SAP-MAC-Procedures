@@ -263,3 +263,46 @@ CREATE TABLE Mst_Valuation_Type (
     Modified_By VARCHAR(100),
     Modified_On DATETIME
 );
+
+---t19
+
+CREATE TABLE Mst_SupvCode (
+    Supv_ID INT IDENTITY(1,1) PRIMARY KEY,
+    Plant_ID INT,
+    Sup_Code NVARCHAR(50),
+    Sup_Name NVARCHAR(100),
+    Active_Status BIT,
+    Created_By INT,
+    Created_On DATETIME,
+    Modified_By INT,
+    Modified_On DATETIME
+);
+
+---T20
+
+CREATE TABLE Mst_Module (
+    Module_ID INT IDENTITY(1,1) PRIMARY KEY,
+    Plant_ID INT,
+    Dept_ID INT,
+    Module_Name NVARCHAR(100),
+    Created_By INT,
+    Created_On DATETIME ,
+    Modified_By INT,
+    Modified_On DATETIME
+);
+
+
+-----T21
+
+CREATE TABLE Mst_Line (
+    Line_ID INT IDENTITY(1,1) PRIMARY KEY,
+    Plant_ID INT,
+    Dept_ID INT,
+    Module_ID INT,
+    Line_Name NVARCHAR(100),
+    Supv_ID INT,
+    Created_By INT,
+    Created_On DATETIME ,
+    Modified_By INT,
+    Modified_On DATETIME 
+);
