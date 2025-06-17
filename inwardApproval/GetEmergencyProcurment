@@ -20,12 +20,15 @@ BEGIN
         i.Approval3_Status,
 
         i.Approver_1,
+        u1.User_Name AS Approver1_Name,
         ru1.Role_Name AS Approver1_RoleName,
 
         i.Approver_2,
+        u2.User_Name AS Approver2_Name,
         ru2.Role_Name AS Approver2_RoleName,
 
         i.Approver_3,
+        u3.User_Name AS Approver3_Name,
         ru3.Role_Name AS Approver3_RoleName,
 
         i.Approver1_Comment,
