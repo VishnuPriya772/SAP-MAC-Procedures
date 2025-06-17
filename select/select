@@ -10,6 +10,13 @@ SELECT * FROM Mst_Movement_Type;
 SELECT * FROM Mst_Movement_List_Item;
 SELECT * FROM Mst_Vendor;
 SELECT * FROM Mst_Customer;
+-- T20: Select all from Supervisor Master
+SELECT * FROM Mst_SupvCode;
+-- T21: Select all from Module Master
+SELECT * FROM Mst_Module;
+-- T22: Select all from Line Master
+SELECT * FROM Mst_Line;
+
 -- T20: Get all Supervisor records
 SELECT 
     Supv_ID,
