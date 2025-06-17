@@ -16,7 +16,8 @@ BEGIN
         v.Vendor_Code,
         v.Vendor_Name,
         p.Plant_Code,
-      CONVERT(VARCHAR(10), i.Invoice_Date, 120) AS Invoice_Date, 
+     ---- CONVERT(VARCHAR(10), i.Invoice_Date, 120) AS Invoice_Date, 
+ FORMAT(i.Invoice_Date, 'dd-MM-yyyy') AS Invoice_Date, -- formatted date
         i.Invoice_No,
         i.Invoice_Value,
         i.Purchase_Order,
