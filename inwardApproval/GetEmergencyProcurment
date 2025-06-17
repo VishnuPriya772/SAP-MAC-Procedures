@@ -1,42 +1,52 @@
-USE [Sap_Approval]
-GO
-/****** Object:  StoredProcedure [dbo].[GetEmergencyProcurment]    Script Date: 16-06-2025 16:16:08 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
 ALTER PROCEDURE [dbo].[GetEmergencyProcurment]
 @UserID Varchar(50)
 AS
 BEGIN
-       SELECT i.Inward_ID ,
-	i.Vendor_ID,
-	v.Vendor_Code,
-	v.Vendor_Name,
-	
-	
-	i.Material_Description,
-	i.Invoice_Qty,
-	
-	i.Invoice_Value,i.Purchase_Order,
-	
-	i.Reason_For_Delay,
-	i.Inward_Type,
-	  i.Status,i.Approval1_Status,i.Approval2_Status,i.Approval3_Status,i.Approver_1,i.Approver_2,i.Approver_3,i.Approver1_Comment,i.Approver2_Comment,i.Approver3_Comment
-	
-	from Trn_Inward_Old_Invoice i
-    INNER JOIN 
-       Mst_Vendor v
-    ON 
-       i.Vendor_ID = v.Vendor_ID
-	   
-	    INNER JOIN 
-       Mst_User u
-    ON 
-       i.Created_By =u.User_ID
+    SELECT 
+        i.Inward_ID,
+        i.Vendor_ID,
+        v.Vendor_Code,
+        v.Vendor_Name,
+        i.Material_Description,
+        i.Invoice_Qty,
+        i.Invoice_Value,
+        i.Purchase_Order,
+        i.Reason_For_Delay,
+        i.Inward_Type,
+        i.Status,
+        
+        i.Approval1_Status,
+        i.Approval2_Status,
+        i.Approval3_Status,
 
+        i.Approver_1,
+        ru1.Role_Name AS Approver1_RoleName,
 
-	   where Inward_Type='E' And i.Created_By=@UserID  AND i.Status !='Approved'
-    
+        i.Approver_2,
+        ru2.Role_Name AS Approver2_RoleName,
+
+        i.Approver_3,
+        ru3.Role_Name AS Approver3_RoleName,
+
+        i.Approver1_Comment,
+        i.Approver2_Comment,
+        i.Approver3_Comment
+
+    FROM Trn_Inward_Old_Invoice i
+    INNER JOIN Mst_Vendor v ON i.Vendor_ID = v.Vendor_ID
+    INNER JOIN Mst_User u ON i.Created_By = u.User_ID
+
+    -- Join Mst_User by Employee_ID for each approver
+    LEFT JOIN Mst_User u1 ON i.Approver_1 = u1.Employee_ID
+    LEFT JOIN Mst_Role ru1 ON u1.Role_ID = ru1.Role_ID
+
+    LEFT JOIN Mst_User u2 ON i.Approver_2 = u2.Employee_ID
+    LEFT JOIN Mst_Role ru2 ON u2.Role_ID = ru2.Role_ID
+
+    LEFT JOIN Mst_User u3 ON i.Approver_3 = u3.Employee_ID
+    LEFT JOIN Mst_Role ru3 ON u3.Role_ID = ru3.Role_ID
+
+    WHERE i.Inward_Type = 'E'
+      AND i.Created_By = @UserID
+      AND i.Status != 'Approved'
 END;
