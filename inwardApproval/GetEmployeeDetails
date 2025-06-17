@@ -1,8 +1,16 @@
-
- create PROCEDURE GetEmployeeDetails
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[GetEmployeeDetails]    Script Date: 17-06-2025 12:19:35 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[GetEmployeeDetails]
  
 AS
 BEGIN
     SET NOCOUNT ON;
-	select Employee_ID ,USER_NAME,Role_ID from Mst_User where Role_ID IN(6 ,10)
+	select u.Employee_ID ,u.USER_NAME,u.Role_ID ,ru1.Role_Name from Mst_User u
+	 LEFT JOIN Mst_Role ru1 ON u.Role_ID = ru1.Role_ID
+	where u.Role_ID IN(6 ,10)
 END;
