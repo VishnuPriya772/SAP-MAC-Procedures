@@ -75,7 +75,8 @@ CREATE TABLE Mst_Material (
     Modified_On DATETIME
 );
 
-
+ALTER TABLE Mst_Material
+ADD Supv_ID INT;
 
 
 --T 6 Mst Storage  Location
