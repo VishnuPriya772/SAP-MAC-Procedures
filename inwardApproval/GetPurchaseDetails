@@ -1,53 +1,58 @@
-USE [Sap_Approval]
-GO
-/****** Object:  StoredProcedure [dbo].[GetPurchaseDetails]    Script Date: 16-06-2025 14:13:54 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
 ALTER PROCEDURE [dbo].[GetPurchaseDetails]
 @UserID Varchar(50)
 AS
 BEGIN
-   SELECT i.Inward_ID ,
-	
-	v.Vendor_Code,
-	v.Vendor_Name,
-    p.Plant_Code,
-	---CONVERT(VARCHAR(10), i.Invoice_Date, 120) AS Invoice_Date,
- FORMAT(i.Invoice_Date, 'dd-MM-yyyy') AS Invoice_Date, -- formatted date
-	i.Invoice_No,
-	i.Invoice_Qty,
-	i.Invoice_Value,
-	i.Purchase_Order,
-	
-	m.Material_Code,
-	i.Monthly_Scheduled_Qty,
-	i.Current_Stock,
-	i.Reason_For_Delay,
-	i.Inward_Type,
-	i.Status,i.Approval1_Status,i.Approval2_Status,i.Approval3_Status,i.Approver_1,i.Approver_2,i.Approver_3,i.Approver1_Comment,i.Approver2_Comment,i.Approver3_Comment
-	
-	from Trn_Inward_Old_Invoice i
-    INNER JOIN 
-       Mst_Vendor v
-    ON 
-       i.Vendor_ID = v.Vendor_ID
-	    INNER JOIN 
-       Mst_Material m
-       
-    ON 
-       i.Material_ID = m.Material_ID
-	    INNER JOIN 
-       Mst_User u
-    ON 
-       i.Created_By =u.User_ID
-       INNER JOIN 
-       Mst_Plant  p
-    ON 
-       i.Plant_ID =p.Plant_ID
+   SELECT 
+       i.Inward_ID,
+       v.Vendor_Code,
+       v.Vendor_Name,
+       p.Plant_Code,
+       FORMAT(i.Invoice_Date, 'dd-MM-yyyy') AS Invoice_Date,
+       i.Invoice_No,
+       i.Invoice_Qty,
+       i.Invoice_Value,
+       i.Purchase_Order,
+       m.Material_Code,
+       i.Monthly_Scheduled_Qty,
+       i.Current_Stock,
+       i.Reason_For_Delay,
+       i.Inward_Type,
+       i.Status,
 
-	   where i.Inward_Type='D'And i.Created_By=@UserID  AND i.Status !='Approved'
-    
-END;
+       i.Approval1_Status,
+       i.Approval2_Status,
+       i.Approval3_Status,
+
+       i.Approver_1,
+       ru1.Role_Name AS Approver1_RoleName,
+
+       i.Approver_2,
+       ru2.Role_Name AS Approver2_RoleName,
+
+       i.Approver_3,
+       ru3.Role_Name AS Approver3_RoleName,
+
+       i.Approver1_Comment,
+       i.Approver2_Comment,
+       i.Approver3_Comment
+
+   FROM Trn_Inward_Old_Invoice i
+   INNER JOIN Mst_Vendor v ON i.Vendor_ID = v.Vendor_ID
+   INNER JOIN Mst_Material m ON i.Material_ID = m.Material_ID
+   INNER JOIN Mst_User u ON i.Created_By = u.User_ID
+   INNER JOIN Mst_Plant p ON i.Plant_ID = p.Plant_ID
+
+   -- Approver role joins
+   LEFT JOIN Mst_User u1 ON i.Approver_1 = u1.Employee_ID
+   LEFT JOIN Mst_Role ru1 ON u1.Role_ID = ru1.Role_ID
+
+   LEFT JOIN Mst_User u2 ON i.Approver_2 = u2.Employee_ID
+   LEFT JOIN Mst_Role ru2 ON u2.Role_ID = ru2.Role_ID
+
+   LEFT JOIN Mst_User u3 ON i.Approver_3 = u3.Employee_ID
+   LEFT JOIN Mst_Role ru3 ON u3.Role_ID = ru3.Role_ID
+
+   WHERE i.Inward_Type = 'D'
+     AND i.Created_By = @UserID
+     AND i.Status != 'Approved'
+END
