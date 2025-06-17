@@ -276,35 +276,76 @@ VALUES
 
 
 
-INSERT INTO Mst_Access (Role_ID, Screen_ID, Active_Status, Created_By, Created_On) VALUES
-(1, 15, 1, 1, GETDATE()),
-(2, 14, 1, 1, GETDATE()),
-(3, 14, 1, 1, GETDATE()),
-(4, 14, 1, 1, GETDATE()),
-(5, 14, 1, 1, GETDATE()),
-(6, 14, 1, 1, GETDATE()),
-(7, 7, 1, 1, GETDATE()),
-(7, 8, 1, 1, GETDATE()),
-(7, 9, 1, 1, GETDATE()),
-(7, 10, 1, 1, GETDATE()),
-(7, 12, 1, 1, GETDATE()),
-(7, 13, 1, 1, GETDATE()),
-(8, 14, 1, 1, GETDATE()),
-(9, 1, 1, 1, GETDATE()),
-(9, 2, 1, 1, GETDATE()),
-(9, 3, 1, 1, GETDATE()),
-(9, 4, 1, 1, GETDATE()),
-(9, 5, 1, 1, GETDATE()),
-(9, 6, 1, 1, GETDATE()),
-(9, 7, 1, 1, GETDATE()),
-(9, 8, 1, 1, GETDATE()),
-(9, 9, 1, 1, GETDATE()),
-(9, 10, 1, 1, GETDATE()),
-(9, 11, 1, 1, GETDATE()),
-(9, 12, 1, 1, GETDATE()),
-(9, 13, 1, 1, GETDATE()),
-(9, 14, 1, 1, GETDATE()),
-(9, 15, 1, 1, GETDATE());
+-- Step 1: Delete inactive records
+DELETE FROM Mst_Access WHERE Active_Status = 0;
+
+-- Step 2: Insert active records with Created_By = 9 and Created_On = GETDATE()
+INSERT INTO Mst_Access (Role_ID, Screen_ID, Active_Status, Created_By, Created_On)
+VALUES
+(1, 15, 1, 9, GETDATE()),
+(2, 14, 1, 9, GETDATE()),
+(3, 14, 1, 9, GETDATE()),
+(4, 14, 1, 9, GETDATE()),
+(5, 14, 1, 9, GETDATE()),
+(6, 14, 1, 9, GETDATE()),
+(7, 7, 1, 9, GETDATE()),
+(7, 8, 1, 9, GETDATE()),
+(7, 9, 1, 9, GETDATE()),
+(7, 10, 1, 9, GETDATE()),
+(7, 12, 1, 9, GETDATE()),
+(7, 13, 1, 9, GETDATE()),
+(8, 14, 1, 9, GETDATE()),
+(9, 1, 1, 9, GETDATE()),
+(9, 2, 1, 9, GETDATE()),
+(9, 3, 1, 9, GETDATE()),
+(9, 4, 1, 9, GETDATE()),
+(9, 5, 1, 9, GETDATE()),
+(9, 6, 1, 9, GETDATE()),
+(9, 7, 1, 9, GETDATE()),
+(9, 8, 1, 9, GETDATE()),
+(9, 9, 1, 9, GETDATE()),
+(9, 10, 1, 9, GETDATE()),
+(9, 11, 1, 9, GETDATE()),
+(9, 12, 1, 9, GETDATE()),
+(9, 13, 1, 9, GETDATE()),
+(9, 14, 1, 9, GETDATE()),
+(9, 15, 1, 9, GETDATE()),
+(7, 16, 1, 9, GETDATE()),
+(7, 17, 1, 9, GETDATE()),
+(7, 14, 1, 9, GETDATE()),
+(7, 18, 1, 9, GETDATE()),
+(4, 18, 1, 9, GETDATE()),
+(9, 18, 1, 9, GETDATE()),
+(9, 16, 1, 9, GETDATE()),
+(9, 17, 1, 9, GETDATE()),
+(2, 19, 1, 9, GETDATE()),
+(3, 19, 1, 9, GETDATE()),
+(4, 19, 1, 9, GETDATE()),
+(5, 19, 1, 9, GETDATE()),
+(6, 19, 1, 9, GETDATE()),
+(7, 19, 1, 9, GETDATE()),
+(8, 19, 1, 9, GETDATE()),
+(9, 19, 1, 9, GETDATE()),
+(9, 20, 1, 9, GETDATE()),
+(2, 20, 1, 9, GETDATE()),
+(3, 20, 1, 9, GETDATE()),
+(4, 20, 1, 9, GETDATE()),
+(5, 20, 1, 9, GETDATE()),
+(6, 20, 1, 9, GETDATE()),
+(7, 20, 1, 9, GETDATE()),
+(8, 20, 1, 9, GETDATE()),
+(9, 21, 1, 9, GETDATE()),
+(7, 22, 1, 9, GETDATE()),
+(3, 22, 1, 9, GETDATE()),
+(3, 23, 1, 9, GETDATE()),
+(5, 23, 1, 9, GETDATE()),
+(4, 23, 1, 9, GETDATE()),
+(2, 22, 1, 9, GETDATE()),
+(6, 22, 1, 9, GETDATE()),
+(10, 22, 1, 9, GETDATE()),
+(9, 22, 1, 9, GETDATE()),
+(9, 23, 1, 9, GETDATE());
+
 
 --T M 16
 
@@ -314,7 +355,7 @@ Busines Table front end data insert
 ----T M 17
 
 INSERT INTO Mst_User_Level (User_Level_Name, Active_Status, Created_By, Created_On)
-VALUES('L1.CREATOR/REQUESTOR',1,9,GETDATE()),('L2.DEPARTMENT HEAD',1,9,GETDATE()),('L3.FUNCTIONAL HEAD/PLANT HEAD',1,9,GETDATE()),('L1.BUSINESS HEAD',1,9,GETDATE())
+VALUES('L1.CREATOR/REQUESTOR',1,9,GETDATE()),('L2.DEPARTMENT HEAD',1,9,GETDATE()),('L3.FUNCTIONAL HEAD/PLANT HEAD',1,9,GETDATE()),('L4.BUSINESS HEAD',1,9,GETDATE())
 
 -- T20: Insert into Supervisor Master (Mst_SupvCode)
 INSERT INTO Mst_SupvCode (
@@ -323,14 +364,13 @@ INSERT INTO Mst_SupvCode (
     Sup_Name,
     Active_Status,
     Created_By,
-    Created_On,
-    Modified_By,
-    Modified_On
+    Created_On
+    
 )
 VALUES (
-    -- Add values here
-    , '', '', 1,  -- Sup_Code, Sup_Name, Active_Status
-    , GETDATE(), , GETDATE()
+   
+   1 , '', '', 1, 
+    9, GETDATE()
 );
 -- T21: Insert into Module Master (Mst_Module)
 INSERT INTO Mst_Module (
@@ -338,14 +378,12 @@ INSERT INTO Mst_Module (
     Dept_ID,
     Module_Name,
     Created_By,
-    Created_On,
-    Modified_By,
-    Modified_On
+    Created_On
 )
 VALUES (
     -- Add values here
-    , , '',  -- Plant_ID, Dept_ID, Module_Name
-    , GETDATE(), , GETDATE()
+    1, 1, '',  -- Plant_ID, Dept_ID, Module_Name
+    9, GETDATE()
 );
 -- T22: Insert into Line Master (Mst_Line)
 INSERT INTO Mst_Line (
@@ -355,12 +393,10 @@ INSERT INTO Mst_Line (
     Line_Name,
     Supv_ID,
     Created_By,
-    Created_On,
-    Modified_By,
-    Modified_On
+    Created_On
 )
 VALUES (
     -- Add values here
-    , , , '', ,  -- Plant_ID, Dept_ID, Module_ID, Line_Name, Supv_ID
-    , GETDATE(), , GETDATE()
+    1,1 ,1 , '',1 ,  -- Plant_ID, Dept_ID, Module_ID, Line_Name, Supv_ID
+   9 , GETDATE()
 );
