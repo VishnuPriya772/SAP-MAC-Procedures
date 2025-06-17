@@ -237,26 +237,40 @@ VALUES
 
 --T M 14
 
-INSERT INTO Mst_Screen (Screen_Name, Screen_Code, Screen_Type, Active_Status, Created_By, Created_On)
+INSERT INTO Mst_Screen (
+    Screen_Name,
+    Screen_Code,
+    Screen_Type,
+    Active_Status,
+    Created_By,
+    Created_On
+)
 VALUES 
-('company', 'company', 'Masters', '1', '1', GETDATE()),
-('BusinessDivision', 'BusinessDivision', 'Masters', '1', '1', GETDATE()),
-('Plant', 'Plant', 'Masters', '1', '1', GETDATE()),
-('Department', 'Department', 'Masters', '1', '1', GETDATE()),
-('UserMaster', 'UserMaster', 'Masters', '1', '1', GETDATE()),
-('Role', 'Role', 'Masters', '1', '1', GETDATE()),
-('Material', 'Material', 'Masters', '1', '1', GETDATE()),
-('Vendor', 'Vendor', 'Masters', '1', '1', GETDATE()),
-('Customer', 'Customer', 'Masters', '1', '1', GETDATE()),
-('StorageLocation', 'StorageLocation', 'Masters', '1', '1', GETDATE()),
-('Movement_Type', 'Movement_Type', 'Masters', '1', '1', GETDATE()),
-('MVT_LIST_ITEM', 'MVT_LIST_ITEM', 'Masters', '1', '1', GETDATE()),
-('CostCenter', 'CostCenter', 'Masters', '1', '1', GETDATE()),
-('Approval_309', 'Approval_309', 'Approval', '1', '1', GETDATE()),
-(('dashboard', 'dashboard', 'Dashboard', 1, 1, GETDATE()),
-('Approval_201', 'Approval_201', 'Approval', '1', '1', GETDATE()),
-('Approval_202', 'Approval_202', 'Approval', '1', '1', GETDATE())
-;
+('company', 'company', 'Masters', 1, 1, GETDATE()),
+('BusinessDivision', 'BusinessDivision', 'Masters', 1, 1, GETDATE()),
+('Plant', 'Plant', 'Masters', 1, 1, GETDATE()),
+('Department', 'Department', 'Masters', 1, 1, GETDATE()),
+('UserMaster', 'UserMaster', 'Masters', 1, 1, GETDATE()),
+('Role', 'Role', 'Masters', 1, 1, GETDATE()),
+('Material', 'Material', 'Masters', 1, 1, GETDATE()),
+('Vendor', 'Vendor', 'Masters', 1, 1, GETDATE()),
+('Customer', 'Customer', 'Masters', 1, 1, GETDATE()),
+('StorageLocation', 'StorageLocation', 'Masters', 1, 1, GETDATE()),
+('Movement_Type', 'Movement_Type', 'Masters', 1, 1, GETDATE()),
+('MVT_LIST_ITEM', 'MVT_LIST_ITEM', 'Masters', 1, 1, GETDATE()),
+('CostCenter', 'CostCenter', 'Masters', 1, 1, GETDATE()),
+('Approval_309', 'Approval_309', 'Approval', 1, 1, GETDATE()),
+('dashboard', 'dashboard', 'Dashboard', 1, 1, GETDATE()),
+('Report1', 'Report1', 'Report', 1, 9, GETDATE()),
+('Report2', 'Report2', 'Report', 1, 9, GETDATE()),
+('sap', 'sap', 'SAP', 1, 1, GETDATE()),
+('Approval_201', 'Approval_201', 'Approval', 1, 1, GETDATE()),
+('Approval_202', 'Approval_202', 'Approval', 1, 1, GETDATE()),
+('ValuationType', 'ValuationType', 'Masters', 1, 1, GETDATE()),
+('InwardApproval', 'InwardApproval', 'Approval', 1, 1, GETDATE()),
+('EmergencyApproval', 'EmergencyApproval', 'Approval', 1, 1, GETDATE()),
+('SupvCode', 'SupvCode', 'Masters', 1, 1, GETDATE());
+
 
 --T M 15
 
