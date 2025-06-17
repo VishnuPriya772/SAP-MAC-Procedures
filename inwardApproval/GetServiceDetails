@@ -42,13 +42,13 @@ BEGIN
     INNER JOIN Mst_Plant p ON i.Plant_ID = p.Plant_ID
 
     -- Join approver user info
-    LEFT JOIN Mst_User u1 ON i.Approver_1 = u1.User_ID
+    LEFT JOIN Mst_User u1 ON i.Approver_1 = u1.Employee_ID
     LEFT JOIN Mst_Role ru1 ON u1.Role_ID = ru1.Role_ID
 
-    LEFT JOIN Mst_User u2 ON i.Approver_2 = u2.User_ID
+    LEFT JOIN Mst_User u2 ON i.Approver_2 = u2.Employee_ID
     LEFT JOIN Mst_Role ru2 ON u2.Role_ID = ru2.Role_ID
 
-    LEFT JOIN Mst_User u3 ON i.Approver_3 = u3.User_ID
+    LEFT JOIN Mst_User u3 ON i.Approver_3 = u3.Employee_ID
     LEFT JOIN Mst_Role ru3 ON u3.Role_ID = ru3.Role_ID
 
     WHERE i.Inward_Type = 'S'
