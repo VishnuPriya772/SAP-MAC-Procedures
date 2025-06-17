@@ -27,7 +27,7 @@ BEGIN
         WHEN i.Inward_Type = 'D' THEN 'Purchase'
         ELSE i.Inward_Type
     END AS Inward_Type,
-        i.Status,
+        i.Status
     
     FROM 
         Trn_Inward_Old_Invoice i
@@ -35,6 +35,7 @@ BEGIN
         Mst_Vendor v ON i.Vendor_ID = v.Vendor_ID
     INNER JOIN 
         Mst_User u ON i.Created_By = u.User_ID
+		 INNER JOIN 
  Mst_Plant  p
     ON 
        i.Plant_ID =p.Plant_ID
