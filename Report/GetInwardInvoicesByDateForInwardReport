@@ -51,7 +51,7 @@ BEGIN
     ON 
        i.Plant_ID =p.Plant_ID
     WHERE 
-        i.Inward_Type = 'D' or i.Inward_Type = 's'
+        i.Inward_Type != 'E' 
        
         AND CAST(i.Created_On AS DATE) BETWEEN @FromDate AND @ToDate
         -- AND i.Status IN ('New', 'Rejected') -- Uncomment if needed
