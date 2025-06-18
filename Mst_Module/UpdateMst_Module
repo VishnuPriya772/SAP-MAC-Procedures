@@ -1,8 +1,14 @@
-
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[UpdateMst_Module]    Script Date: 18-06-2025 14:38:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 ALTER PROCEDURE [dbo].[UpdateMst_Module]  
     @Module_ID INT,  
     @Module_Name NVARCHAR(200),  
-     @Dept_ID INT, 
+    
     @ActiveStatus BIT,  
     @UserID VARCHAR(20) , 
    @StatusCode INT OUTPUT -- New output parameter  
@@ -25,7 +31,7 @@ END
     SET   
          
         Module_Name = @Module_Name,  
-       Dept_ID=@Dept_ID,
+      
        Active_Status = @ActiveStatus,  
         Modified_By = @UserID,  
         Modified_On = GETDATE()  
