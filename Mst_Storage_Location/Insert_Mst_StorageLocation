@@ -1,0 +1,29 @@
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[Insert_Mst_StorageLocation]    Script Date: 18-06-2025 17:16:39 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[Insert_Mst_StorageLocation]  
+     @Plant_Code INT, 
+	 @Supv_ID INT,
+    @Storage_Code INT,  
+    @SLoc_Name VARCHAR(100),  
+   
+    @Active_Status BIT,  
+    @UserID VARCHAR(50)  
+     
+      
+AS  
+BEGIN  
+    INSERT INTO Mst_Storage_Location(  
+    Plant_ID,Supv_ID, Storage_Code, SLoc_Name, Active_Status, Created_By, Created_On  
+)  
+VALUES (  
+    @Plant_Code,@Supv_ID, @Storage_Code, @SLoc_Name, @Active_Status, @UserID, GETDATE()  
+);  
+  
+  
+  
+END  
