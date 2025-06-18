@@ -1,0 +1,17 @@
+ALTER PROCEDURE [dbo].[GetSupvCode]
+    @Plant_Code INT
+AS
+BEGIN
+    SELECT
+        s.Supv_ID,
+        s.Sup_Name,
+        s.Sup_Code,
+        s.Active_Status,
+        s.Plant_ID
+    FROM 
+        Mst_SupvCode s
+    INNER JOIN 
+        Mst_Plant p ON s.Plant_ID = p.Plant_ID
+    WHERE 
+        p.Plant_Code = @Plant_Code
+END
