@@ -1,0 +1,20 @@
+
+ create Procedure [dbo].[GetSupvCodeMaster]
+ AS
+BEGIN
+
+SELECT
+p.Plant_Code,
+s.Supv_ID,
+s.Sup_Name,
+s.Sup_Code,
+s.Active_Status
+From Mst_SupvCode s
+    INNER JOIN 
+        Mst_Plant p 
+    ON 
+        s.Plant_ID = p.Plant_ID
+
+
+    END
+
