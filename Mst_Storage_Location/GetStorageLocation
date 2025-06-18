@@ -1,0 +1,23 @@
+ ALTER Procedure [dbo].[GetStorageLocation]
+ AS
+BEGIN
+
+SELECT
+p.Plant_Code,
+s.SLoc_ID,
+s.SLoc_Name,
+s.Supv_ID,
+m.Sup_Code,
+s.Storage_Code,
+s.Active_Status
+From Mst_Storage_Location s
+    INNER JOIN 
+        Mst_Plant p 
+    ON 
+        s.Plant_ID = p.Plant_ID
+ INNER JOIN 
+        Mst_SupvCode m
+    ON 
+        m.Supv_ID = s.Supv_ID
+
+    END
