@@ -405,6 +405,40 @@ VALUES
 (3, '128', 'Mando - IBJ/OBJ', 1, 1, GETDATE()),
 (3, '129', 'Mando - Assembly', 1, 1, GETDATE()),
 (3, 'N01', 'NPD', 1, 1, GETDATE());
+INSERT INTO Mst_Supv_Code (Plant_ID, Sup_Code, Sup_Name, Active_Status, Created_By, Created_On)
+VALUES
+(1, '001', 'Box', 1, 1, GETDATE()),
+(1, '002', 'Worm', 1, 1, GETDATE()),
+(1, '003', 'Nut', 1, 1, GETDATE()),
+(1, '004', 'Inner Column Main Nut', 1, 1, GETDATE()),
+(1, '005', 'Rocker Shaft', 1, 1, GETDATE()),
+(1, '006', 'Inner Column', 1, 1, GETDATE()),
+(1, '007', 'Heat Treatment', 1, 1, GETDATE()),
+(1, '008', 'Drop Arm', 1, 1, GETDATE()),
+(1, '009', 'SGP Assembly', 1, 1, GETDATE()),
+(1, '010', 'Telco Module Ball Pin', 1, 1, GETDATE()),
+(1, '011', 'Telco Module Socket', 1, 1, GETDATE()),
+(1, '012', 'MSIL Module Ball pin', 1, 1, GETDATE()),
+(1, '013', 'MSIL  Module Socket', 1, 1, GETDATE()),
+(1, '014', 'LCA Module Ball pin', 1, 1, GETDATE()),
+(1, '015', 'LCA Module Socket', 1, 1, GETDATE()),
+(1, '016', 'LCA Arms', 1, 1, GETDATE()),
+(1, '017', 'Tractor Module Ball pin', 1, 1, GETDATE()),
+(1, '018', 'Tractor Module Socket', 1, 1, GETDATE()),
+(1, '019', 'Tractor Module  Tube', 1, 1, GETDATE()),
+(1, '020', 'Telco Module Assembly', 1, 1, GETDATE()),
+(1, '021', 'MSIL  Module Assembly', 1, 1, GETDATE()),
+(1, '022', 'LCA Module Assembly', 1, 1, GETDATE()),
+(1, '023', 'Tractor Module Assembly', 1, 1, GETDATE()),
+(1, '024', 'Telco Module Tube', 1, 1, GETDATE()),
+(1, '025', 'MSIL Module Tube', 1, 1, GETDATE()),
+(1, '026', 'Worm Soft', 1, 1, GETDATE()),
+(1, '027', 'Nut Soft', 1, 1, GETDATE()),
+(1, '028', 'Rocker Shaft Soft', 1, 1, GETDATE()),
+(1, '029', 'Hydraulics Cylinder assembly', 1, 1, GETDATE()),
+(1, '030', 'Hydraulics Steering unit assy', 1, 1, GETDATE()),
+(1, '031', 'Hydraulics Machining', 1, 1, GETDATE()),
+(1, 'N01', 'NPD', 1, 1, GETDATE());
 
 -- T21: Insert into Module Master (Mst_Module)
 INSERT INTO Mst_Module (
