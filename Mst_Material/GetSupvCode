@@ -13,5 +13,5 @@ BEGIN
     INNER JOIN 
         Mst_Plant p ON s.Plant_ID = p.Plant_ID
     WHERE 
-        p.Plant_Code = @Plant_Code
+        s.Plant_ID = @Plant_Code
 END
