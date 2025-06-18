@@ -1,24 +1,31 @@
-create PROCEDURE [dbo].[UpdateMst_Module]  
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[UpdateMst_Module]    Script Date: 18-06-2025 14:38:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[UpdateMst_Module]  
     @Module_ID INT,  
     @Module_Name NVARCHAR(200),  
      @Dept_ID INT, 
     @ActiveStatus BIT,  
-    @UserID VARCHAR(20)  
-  --  @StatusCode INT OUTPUT -- New output parameter  
+    @UserID VARCHAR(20) , 
+   @StatusCode INT OUTPUT -- New output parameter  
 AS  
 BEGIN  
--- IF @ActiveStatus = 0  
---    BEGIN  
+ IF @ActiveStatus = 0  
+    BEGIN  
   
---    -- Check if user is inactive  
---    IF EXISTS (  
---        SELECT 1 FROM Mst_Module WHERE Module_ID = @Module_ID AND Active_Status = 0  
---    )  
---    BEGIN  
---        SET @StatusCode = 0; -- Inactive user, do not update  
---        RETURN;  
---    END  
---END  
+    -- Check if user is inactive  
+    IF EXISTS (  
+        SELECT 1 FROM Mst_Module WHERE Module_ID = @Module_ID AND Active_Status = 0  
+    )  
+    BEGIN  
+        SET @StatusCode = 0; -- Inactive user, do not update  
+        RETURN;  
+    END  
+END  
     -- Proceed with update if user is active  
     UPDATE Mst_Module 
     SET   
@@ -30,5 +37,5 @@ BEGIN
         Modified_On = GETDATE()  
     WHERE Module_ID = @Module_ID;  
   
-   -- SET @StatusCode = 1; -- Update successful  
+   SET @StatusCode = 1; -- Update successful  
 END  
