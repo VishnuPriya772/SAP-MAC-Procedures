@@ -68,7 +68,7 @@ CREATE TABLE Mst_Material (
     Material_Code NVARCHAR(50),
     Description NVARCHAR(255),
     Material_Type NVARCHAR(4),
-    Rate DECIMAL(6,2), 
+    Rate DECIMAL(14,2), 
     Active_Status BIT,
     Created_By INT,
     Created_On DATETIME,
