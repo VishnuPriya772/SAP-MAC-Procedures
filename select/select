@@ -10,49 +10,20 @@ SELECT * FROM Mst_Movement_Type;
 SELECT * FROM Mst_Movement_List_Item;
 SELECT * FROM Mst_Vendor;
 SELECT * FROM Mst_Customer;
--- T20: Select all from Supervisor Master
+SELECT * FROM Mst_Access;
+SELECT * FROM Mst_Business_Division;
+
+SELECT * FROM Mst_Valuation_Type
+SELECT * FROM Mst_User_Level
+SELECT * FROM Mst_Screen
+SELECT * FROM Mst_Sap_Login
 SELECT * FROM Mst_SupvCode;
--- T21: Select all from Module Master
+
 SELECT * FROM Mst_Module;
--- T22: Select all from Line Master
+
 SELECT * FROM Mst_Line;
 
--- T20: Get all Supervisor records
-SELECT 
-    Supv_ID,
-    Plant_ID,
-    Sup_Code,
-    Sup_Name,
-    Active_Status,
-    Created_By,
-    Created_On,
-    Modified_By,
-    Modified_On
-FROM Mst_SupvCode;
--- T21: Get all Module records
-SELECT 
-    Module_ID,
-    Plant_ID,
-    Dept_ID,
-    Module_Name,
-    Created_By,
-    Created_On,
-    Modified_By,
-    Modified_On
-FROM Mst_Module;
--- T22: Get all Line records
-SELECT 
-    Line_ID,
-    Plant_ID,
-    Dept_ID,
-    Module_ID,
-    Line_Name,
-    Supv_ID,
-    Created_By,
-    Created_On,
-    Modified_By,
-    Modified_On
-FROM Mst_Line;
+
 
 SELECT * FROM Trn_Document;
 SELECT * FROM Trn_202_Movement;
