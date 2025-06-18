@@ -1,0 +1,21 @@
+create PROCEDURE [dbo].[Insert_Mst_SupvCode]  
+     @Plant_Code INT,  
+    @Sup_Code INT,  
+    @Sup_Name VARCHAR(100),  
+   
+    @Active_Status BIT,  
+    @UserID VARCHAR(50)  
+     
+      
+AS  
+BEGIN  
+    INSERT INTO Mst_SupvCode(  
+    Plant_ID, Sup_Code, Sup_Name, Active_Status, Created_By, Created_On  
+)  
+VALUES (  
+    @Plant_Code, @Sup_Code, @Sup_Name, @Active_Status, @UserID, GETDATE()  
+);  
+  
+  
+  
+END  
