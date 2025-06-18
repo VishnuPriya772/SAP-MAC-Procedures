@@ -1,0 +1,32 @@
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[GetActiveMaterialInfo]    Script Date: 18-06-2025 15:43:57 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[GetActiveMaterialInfo]
+AS
+BEGIN
+    SELECT  m.Material_ID,
+        m.Material_Code, 
+        p.Plant_Code, 
+        m.Description, 
+        m.Rate, 
+        m.Plant_ID, 
+        m.Material_Type,
+		m.Active_Status,
+		m.Supv_ID,
+		s.Sup_Code
+    FROM 
+        Mst_Material m
+    INNER JOIN 
+        Mst_Plant p 
+    ON 
+        m.Plant_ID = p.Plant_ID
+		 INNER JOIN 
+        Mst_SupvCode s
+    ON 
+        m.Supv_ID = s.Supv_ID
+    
+END;
