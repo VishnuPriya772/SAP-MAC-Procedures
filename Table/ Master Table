@@ -64,6 +64,7 @@ CREATE TABLE Mst_Material_Type (
 CREATE TABLE Mst_Material (
     Material_ID INT IDENTITY(1,1) PRIMARY KEY,
     Plant_ID INT ,
+	Supv_ID INT,
     Material_Code NVARCHAR(50),
     Description NVARCHAR(255),
     Material_Type NVARCHAR(4),
@@ -75,15 +76,13 @@ CREATE TABLE Mst_Material (
     Modified_On DATETIME
 );
 
-ALTER TABLE Mst_Material
-ADD Supv_ID INT;
-
 
 --T 6 Mst Storage  Location
 
 CREATE TABLE Mst_Storage_Location (
     SLoc_ID INT IDENTITY(1,1) PRIMARY KEY,
     Plant_ID INT ,
+	Supv_ID INT,
     Storage_Code INT,  
     SLoc_Name NVARCHAR(50),
     Active_Status BIT,
@@ -92,8 +91,6 @@ CREATE TABLE Mst_Storage_Location (
     Modified_By INT,
     Modified_On DATETIME
 );
-ALTER TABLE Mst_Storage_Location
-ADD Supv_ID INT;
 --T 7 Mst Cost Center
 
 CREATE TABLE Mst_Cost_Center (
