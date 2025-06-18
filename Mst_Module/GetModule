@@ -1,10 +1,11 @@
-CREATE Procedure [dbo].[GetModule]
+Alter Procedure [dbo].[GetModule]
  AS
 BEGIN
 
 SELECT
 p.Plant_Code,
 s.Module_ID,
+s.Dept_ID,
 d.Dept_Name,
 s.Module_Name
 From Mst_Module s
@@ -19,3 +20,4 @@ From Mst_Module s
 
 
     END
+
