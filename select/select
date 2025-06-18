@@ -25,6 +25,7 @@ SELECT * FROM Mst_Line;
 
 
 
+SELECT * FROM Trn_Inward_Old_Invoice;
 SELECT * FROM Trn_Document;
 SELECT * FROM Trn_202_Movement;
 SELECT * FROM Trn_309_Movement;
