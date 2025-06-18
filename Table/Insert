@@ -269,7 +269,8 @@ VALUES
 ('ValuationType', 'ValuationType', 'Masters', 1, 1, GETDATE()),
 ('InwardApproval', 'InwardApproval', 'Approval', 1, 1, GETDATE()),
 ('EmergencyApproval', 'EmergencyApproval', 'Approval', 1, 1, GETDATE()),
-('SupvCode', 'SupvCode', 'Masters', 1, 1, GETDATE());
+('SupvCode', 'SupvCode', 'Masters', 1, 1, GETDATE()),
+('Module', 'Module', 'Masters', 1, 1, GETDATE());
 
 
 --T M 15
