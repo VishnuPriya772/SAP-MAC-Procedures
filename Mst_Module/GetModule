@@ -1,0 +1,21 @@
+CREATE Procedure [dbo].[GetModule]
+ AS
+BEGIN
+
+SELECT
+p.Plant_Code,
+s.Module_ID,
+d.Dept_Name,
+s.Module_Name
+From Mst_Module s
+    INNER JOIN 
+        Mst_Plant p 
+    ON 
+        s.Plant_ID = p.Plant_ID
+		INNER JOIN 
+        Mst_Department d
+    ON 
+        s.Dept_ID = d.Dept_ID
+
+
+    END
