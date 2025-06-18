@@ -1,4 +1,4 @@
-create PROCEDURE [dbo].[UpdateMstSupvCode]  
+Alter PROCEDURE [dbo].[UpdateMstSupvCode]  
     @Supv_ID INT,  
     @Sup_Name NVARCHAR(200),  
       
@@ -12,7 +12,7 @@ BEGIN
   
     -- Check if user is inactive  
     IF EXISTS (  
-        SELECT 1 FROM Mst_Storage_Location WHERE Supv_ID = @Supv_ID AND Active_Status = 0  
+        SELECT 1 FROM Mst_SupvCode WHERE Supv_ID = @Supv_ID AND Active_Status = 0  
     )  
     BEGIN  
         SET @StatusCode = 0; -- Inactive user, do not update  
@@ -31,4 +31,4 @@ END
     WHERE Supv_ID = @Supv_ID;  
   
     SET @StatusCode = 1; -- Update successful  
-END  
+END 
