@@ -359,20 +359,53 @@ INSERT INTO Mst_User_Level (User_Level_Name, Active_Status, Created_By, Created_
 VALUES('L1.CREATOR/REQUESTOR',1,9,GETDATE()),('L2.DEPARTMENT HEAD',1,9,GETDATE()),('L3.FUNCTIONAL HEAD/PLANT HEAD',1,9,GETDATE()),('L4.BUSINESS HEAD',1,9,GETDATE())
 
 -- T20: Insert into Supervisor Master (Mst_SupvCode)
-INSERT INTO Mst_SupvCode (
-    Plant_ID,
-    Sup_Code,
-    Sup_Name,
-    Active_Status,
-    Created_By,
-    Created_On
-    
-)
-VALUES (
-   
-   1 , '', '', 1, 
-    9, GETDATE()
-);
+INSERT INTO Mst_SupvCode (Plant_ID, Sup_Code, Sup_Name, Active_Status, Created_By, Created_On)
+VALUES
+(3, '001', 'Socket', 1, 1, GETDATE()),
+(3, '002', 'Ball pin', 1, 1, GETDATE()),
+(3, '003', 'Ball Joint Assembly', 1, 1, GETDATE()),
+(3, '004', 'SSLP Assembly', 1, 1, GETDATE()),
+(3, '005', 'Box', 1, 1, GETDATE()),
+(3, '006', 'Worm', 1, 1, GETDATE()),
+(3, '007', 'Main Nut', 1, 1, GETDATE()),
+(3, '008', 'Rocker Shaft', 1, 1, GETDATE()),
+(3, '009', 'Drop Arm / Inner Column', 1, 1, GETDATE()),
+(3, '010', 'SGP Assembly', 1, 1, GETDATE()),
+(3, '011', 'Heat Treatment', 1, 1, GETDATE()),
+(3, '012', 'Worm & Nut Assembly', 1, 1, GETDATE()),
+(3, '013', 'Export', 1, 1, GETDATE()),
+(3, '014', 'Sub Assembly', 1, 1, GETDATE()),
+(3, '101', 'Bentler', 1, 1, GETDATE()),
+(3, '102', 'Ford', 1, 1, GETDATE()),
+(3, '103', 'TRW', 1, 1, GETDATE()),
+(3, '104', 'AL', 1, 1, GETDATE()),
+(3, '105', 'GJ', 1, 1, GETDATE()),
+(3, '106', 'LCV', 1, 1, GETDATE()),
+(3, '107', 'Squeeze', 1, 1, GETDATE()),
+(3, '108', 'TELCO', 1, 1, GETDATE()),
+(3, '109', 'Feeder Cell', 1, 1, GETDATE()),
+(3, '110', 'D-Link', 1, 1, GETDATE()),
+(3, '111', 'NPD', 1, 1, GETDATE()),
+(3, '112', 'UCA', 1, 1, GETDATE()),
+(3, '113', 'LBJ', 1, 1, GETDATE()),
+(3, '114', 'SM', 1, 1, GETDATE()),
+(3, '115', 'M&M', 1, 1, GETDATE()),
+(3, '116', 'LCV-SGP', 1, 1, GETDATE()),
+(3, '117', 'Column Type', 1, 1, GETDATE()),
+(3, '118', 'Worm', 1, 1, GETDATE()),
+(3, '119', 'Mainnut', 1, 1, GETDATE()),
+(3, '120', 'Rocker Shaft', 1, 1, GETDATE()),
+(3, '121', 'Outer Column', 1, 1, GETDATE()),
+(3, '122', 'Box', 1, 1, GETDATE()),
+(3, '123', 'Droparm', 1, 1, GETDATE()),
+(3, '124', 'Tube', 1, 1, GETDATE()),
+(3, '125', 'Nissan', 1, 1, GETDATE()),
+(3, '126', 'BRP', 1, 1, GETDATE()),
+(3, '127', 'Volvo', 1, 1, GETDATE()),
+(3, '128', 'Mando - IBJ/OBJ', 1, 1, GETDATE()),
+(3, '129', 'Mando - Assembly', 1, 1, GETDATE()),
+(3, 'N01', 'NPD', 1, 1, GETDATE());
+
 -- T21: Insert into Module Master (Mst_Module)
 INSERT INTO Mst_Module (
     Plant_ID,
@@ -401,3 +434,5 @@ VALUES (
     1,1 ,1 , '',1 ,  -- Plant_ID, Dept_ID, Module_ID, Line_Name, Supv_ID
    9 , GETDATE()
 );
+
+
