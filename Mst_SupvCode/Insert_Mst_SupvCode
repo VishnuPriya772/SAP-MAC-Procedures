@@ -1,6 +1,13 @@
-create PROCEDURE [dbo].[Insert_Mst_SupvCode]  
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[Insert_Mst_SupvCode]    Script Date: 18-06-2025 18:17:31 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[Insert_Mst_SupvCode]  
      @Plant_Code INT,  
-    @Sup_Code INT,  
+    @Sup_Code Varchar(50),  
     @Sup_Name VARCHAR(100),  
    
     @Active_Status BIT,  
