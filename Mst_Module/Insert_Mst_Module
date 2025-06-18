@@ -1,0 +1,27 @@
+CREATE PROCEDURE [dbo].[Insert_Mst_Module]  
+    @Plant_Code INT,  
+    @Dept_ID INT,  
+    @Module_Name VARCHAR(100),  
+    -- @Active_Status BIT,  -- Uncomment if needed
+    @UserID VARCHAR(50)  
+AS  
+BEGIN  
+    SET NOCOUNT ON;
+
+    INSERT INTO Mst_Module (  
+        Plant_ID,  
+        Dept_ID,  
+        Module_Name,  
+        Created_By,  
+        Created_On  
+        -- Active_Status -- Uncomment if needed
+    )  
+    VALUES (  
+        @Plant_Code,  
+        @Dept_ID,  
+        @Module_Name,  
+        @UserID,  
+        GETDATE()  
+        -- ,@Active_Status -- Uncomment if needed
+    );  
+END;
