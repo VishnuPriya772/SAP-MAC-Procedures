@@ -1,7 +1,7 @@
-Create PROCEDURE [dbo].[UpdateMst_Line]  
+ALTER PROCEDURE [dbo].[UpdateMst_Line]  
     @Line_ID INT,  
     @Line_Name NVARCHAR(200),  
-    
+    @Sup_Code  NVARCHAR(200),
     @ActiveStatus BIT,  
     @UserID VARCHAR(20) , 
    @StatusCode INT OUTPUT -- New output parameter  
@@ -24,7 +24,7 @@ END
     SET   
          
         Line_Name = @Line_Name,  
-      
+         Supv_ID=@Sup_Code,
        Active_Status = @ActiveStatus,  
         Modified_By = @UserID,  
         Modified_On = GETDATE()  
