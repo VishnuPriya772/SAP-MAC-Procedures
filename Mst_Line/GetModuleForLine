@@ -1,0 +1,14 @@
+Create Procedure [dbo].[GetModuleForLine]
+ AS
+BEGIN
+
+SELECT
+
+s.Module_ID,
+
+
+s.Module_Name
+From Mst_Module s where s.Active_Status=1
+
+
+    END
