@@ -1,0 +1,19 @@
+UPDATE SL
+SET SL.Supv_ID = SC.Supv_ID
+FROM Mst_Storage_Location SL
+JOIN mst_Plant P ON SL.Plant_ID = P.Plant_ID
+JOIN (
+    SELECT Plant_ID, MIN(Supv_ID) AS Supv_ID
+    FROM Mst_SupvCode
+    GROUP BY Plant_ID
+) SC ON P.Plant_ID = SC.Plant_ID;
+
+
+UPDATE M
+SET M.Supv_ID = SC.Supv_ID
+FROM mst_Material M
+JOIN (
+    SELECT Plant_ID, MIN(Supv_ID) AS Supv_ID
+    FROM Mst_SupvCode
+    GROUP BY Plant_ID
+) SC ON M.Plant_ID = SC.Plant_ID
