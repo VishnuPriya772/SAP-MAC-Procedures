@@ -1,4 +1,4 @@
-Create Procedure [dbo].[GetLine]
+ALTER Procedure [dbo].[GetLine]
  AS
 BEGIN
 
@@ -10,6 +10,8 @@ s.Dept_ID,
 d.Dept_Name,
 s.Line_Name,
 C.Sup_Code,
+C.Supv_ID,
+M.Module_ID,M.Module_Name,
 s.Active_Status
 From Mst_Line s
     INNER JOIN 
