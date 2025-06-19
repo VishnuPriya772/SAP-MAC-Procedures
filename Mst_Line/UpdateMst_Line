@@ -1,0 +1,34 @@
+Create PROCEDURE [dbo].[UpdateMst_Line]  
+    @Line_ID INT,  
+    @Line_Name NVARCHAR(200),  
+    
+    @ActiveStatus BIT,  
+    @UserID VARCHAR(20) , 
+   @StatusCode INT OUTPUT -- New output parameter  
+AS  
+BEGIN  
+ IF @ActiveStatus = 0  
+    BEGIN  
+  
+    -- Check if user is inactive  
+    IF EXISTS (  
+        SELECT 1 FROM Mst_Line WHERE Line_ID = @Line_ID AND Active_Status = 0  
+    )  
+    BEGIN  
+        SET @StatusCode = 0; -- Inactive user, do not update  
+        RETURN;  
+    END  
+END  
+    -- Proceed with update if user is active  
+    UPDATE Mst_Line 
+    SET   
+         
+        Line_Name = @Line_Name,  
+      
+       Active_Status = @ActiveStatus,  
+        Modified_By = @UserID,  
+        Modified_On = GETDATE()  
+    WHERE Line_ID = @Line_ID;  
+  
+   SET @StatusCode = 1; -- Update successful  
+END  
