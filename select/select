@@ -12,21 +12,15 @@ SELECT * FROM Mst_Vendor;
 SELECT * FROM Mst_Customer;
 SELECT * FROM Mst_Access;
 SELECT * FROM Mst_Business_Division;
-
 SELECT * FROM Mst_Valuation_Type
 SELECT * FROM Mst_User_Level
 SELECT * FROM Mst_Screen
 SELECT * FROM Mst_Sap_Login
 SELECT * FROM Mst_SupvCode;
-
 SELECT * FROM Mst_Module;
-
 SELECT * FROM Mst_Line;
-
-
-
 SELECT * FROM Trn_Inward_Old_Invoice;
 SELECT * FROM Trn_Document;
-SELECT * FROM Trn_202_Movement;
-SELECT * FROM Trn_309_Movement;
-SELECT * FROM Trn_Appl_History;
+SELECT * FROM Trn_SapTransfer_Records;
+SELECT * FROM Trn_Approval_History;
+
