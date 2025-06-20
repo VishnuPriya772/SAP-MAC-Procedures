@@ -1,7 +1,14 @@
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[UpdateMst_Line]    Script Date: 20-06-2025 09:10:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 ALTER PROCEDURE [dbo].[UpdateMst_Line]  
     @Line_ID INT,  
     @Line_Name NVARCHAR(200),  
-    @Sup_Code  NVARCHAR(200),
+    @Sup_Code INT,
     @ActiveStatus BIT,  
     @UserID VARCHAR(20) , 
    @StatusCode INT OUTPUT -- New output parameter  
