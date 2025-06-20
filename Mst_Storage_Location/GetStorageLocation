@@ -8,9 +8,7 @@ BEGIN
         s.Storage_Code,
         s.Plant_ID,
         s.Active_Status,
-        m.Supv_ID,
-        m.Sup_Code,
-        m.Sup_Name
+        STRING_AGG(CONCAT(m.Sup_Code, ' - ', m.Sup_Name), ', ') AS Supv_Info
     FROM Mst_Storage_Location s
     INNER JOIN Mst_Plant p 
         ON s.Plant_ID = p.Plant_ID
@@ -18,4 +16,11 @@ BEGIN
         ON map.Sloc_ID = s.SLoc_ID
     INNER JOIN Mst_SupvCode m
         ON m.Supv_ID = map.Supv_ID
+    GROUP BY
+        p.Plant_Code,
+        s.SLoc_ID,
+        s.SLoc_Name,
+        s.Storage_Code,
+        s.Plant_ID,
+        s.Active_Status
 END
