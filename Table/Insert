@@ -271,7 +271,9 @@ VALUES
 ('EmergencyApproval', 'EmergencyApproval', 'Approval', 1, 1, GETDATE()),
 ('SupvCode', 'SupvCode', 'Masters', 1, 1, GETDATE()),
 ('Module', 'Module', 'Masters', 1, 1, GETDATE()),
-('Line', 'Line', 'Masters', 1, 1, GETDATE();
+('Line', 'Line', 'Masters', 1, 1, GETDATE()
+('Store', 'Store', 'Store', 1, 1, GETDATE()),
+('Production', 'Production', 'Production', 1, 1, GETDATE());
 
 
 --T M 15
