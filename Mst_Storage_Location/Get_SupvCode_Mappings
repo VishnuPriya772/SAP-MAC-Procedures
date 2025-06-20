@@ -1,0 +1,17 @@
+CREATE PROCEDURE Get_SupvCode_Mappings
+AS
+BEGIN
+    SELECT 
+       -- M.Sloc_ID,
+        SL.Storage_Code,
+        SC.Sup_Code,
+       -- M.Supv_ID,
+        M.Active_Status
+        --M.Created_By,
+        --M.Created_On,
+       -- M.Modified_By,
+       -- M.Modified_On
+    FROM Mst_SupvCode_Mapping M
+    INNER JOIN Mst_Storage_Location SL ON M.Sloc_ID = SL.SLoc_ID
+    INNER JOIN Mst_SupvCode SC ON M.Supv_ID = SC.Supv_ID
+END
