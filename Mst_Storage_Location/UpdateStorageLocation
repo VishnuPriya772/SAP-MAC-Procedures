@@ -1,0 +1,41 @@
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[UpdateStorageLocation]    Script Date: 20-06-2025 11:24:05 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[UpdateStorageLocation]  
+    @SLoc_ID INT,  
+    @SLoc_Name NVARCHAR(200),  
+      
+    @ActiveStatus BIT,  
+    @UserID VARCHAR(20),  
+    @StatusCode INT OUTPUT -- New output parameter  
+AS  
+BEGIN  
+ IF @ActiveStatus = 0  
+    BEGIN  
+  
+    -- Check if user is inactive  
+    IF EXISTS (  
+        SELECT 1 FROM Mst_Storage_Location WHERE SLoc_ID = @SLoc_ID AND Active_Status = 0  
+    )  
+    BEGIN  
+        SET @StatusCode = 0; -- Inactive user, do not update  
+        RETURN;  
+    END  
+END  
+    -- Proceed with update if user is active  
+    UPDATE Mst_Storage_Location  
+    SET   
+         
+        SLoc_Name = @SLoc_Name,  
+       
+        Active_Status = @ActiveStatus,  
+        Modified_By = @UserID,  
+        Modified_On = GETDATE()  
+    WHERE SLoc_ID = @SLoc_ID;  
+  
+    SET @StatusCode = 1; -- Update successful  
+END  
