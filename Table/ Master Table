@@ -304,3 +304,17 @@ CREATE TABLE Mst_Line (
     Modified_By INT,
     Modified_On DATETIME 
 );
+
+------T22
+
+CREATE TABLE Mst_SupvCode_Mapping (
+    Scmap_ID INT IDENTITY(1,1) PRIMARY KEY,
+    Sloc_ID INT ,
+    Supv_ID INT ,
+    Active_Status BIT ,
+    Created_By NVARCHAR(100),
+    Created_On DATETIME,
+    Modified_By NVARCHAR(100),
+    Modified_On DATETIME
+);
+
