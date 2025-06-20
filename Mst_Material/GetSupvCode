@@ -1,5 +1,12 @@
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[GetSupvCode]    Script Date: 20-06-2025 09:51:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 ALTER PROCEDURE [dbo].[GetSupvCode]
-    @Plant_Code INT
+    @Plant_ID INT
 AS
 BEGIN
     SELECT
@@ -10,8 +17,6 @@ BEGIN
         s.Plant_ID
     FROM 
         Mst_SupvCode s
-    INNER JOIN 
-        Mst_Plant p ON s.Plant_ID = p.Plant_ID
     WHERE 
-        s.Plant_ID = @Plant_Code
+        s.Plant_ID = @Plant_ID
 END
