@@ -1,31 +1,21 @@
-USE [Sap_Approval]
-GO
-/****** Object:  StoredProcedure [dbo].[GetStorageLocation]    Script Date: 18-06-2025 17:14:29 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
- ALTER Procedure [dbo].[GetStorageLocation]
- AS
+ALTER PROCEDURE [dbo].[GetStorageLocation]
+AS
 BEGIN
-
-SELECT
-p.Plant_Code,
-s.SLoc_ID,
-s.SLoc_Name,
-s.Supv_ID,
-m.Sup_Code,
-s.Storage_Code,
-s.Plant_ID,
-s.Active_Status
-From Mst_Storage_Location s
-    INNER JOIN 
-        Mst_Plant p 
-    ON 
-        s.Plant_ID = p.Plant_ID
- INNER JOIN 
-        Mst_SupvCode m
-    ON 
-        m.Supv_ID = s.Supv_ID
-
-    END
+    SELECT
+        p.Plant_Code,
+        s.SLoc_ID,
+        s.SLoc_Name,
+        s.Storage_Code,
+        s.Plant_ID,
+        s.Active_Status,
+        m.Supv_ID,
+        m.Sup_Code,
+        m.Sup_Name
+    FROM Mst_Storage_Location s
+    INNER JOIN Mst_Plant p 
+        ON s.Plant_ID = p.Plant_ID
+    INNER JOIN Mst_SupvCode_Mapping map
+        ON map.Sloc_ID = s.SLoc_ID
+    INNER JOIN Mst_SupvCode m
+        ON m.Supv_ID = map.Supv_ID
+END
