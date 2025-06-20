@@ -17,3 +17,28 @@ JOIN (
     FROM Mst_SupvCode
     GROUP BY Plant_ID
 ) SC ON M.Plant_ID = SC.Plant_ID
+
+
+--------insert data passed on sup_code mapping----
+
+
+WITH RankedMappings AS (
+  SELECT
+    S.SLoc_ID,
+    C.Supv_ID,
+    ROW_NUMBER() OVER (PARTITION BY S.SLoc_ID ORDER BY C.Supv_ID) AS rn
+  FROM Mst_Storage_Location S
+  JOIN Mst_SupvCode C
+    ON S.Plant_ID = C.Plant_ID
+  WHERE S.Active_Status = 1
+    AND C.Active_Status = 1
+)
+INSERT INTO Mst_SupvCode_Mapping (Sloc_ID, Supv_ID, Active_Status, Created_By, Created_On)
+SELECT
+  SLoc_ID,
+  Supv_ID,
+  1 AS Active_Status,
+  7 AS Created_By,
+  GETDATE() AS Created_On
+FROM RankedMappings
+WHERE rn <= 2;  -- ✅ Only insert 2 mappings per Sloc_ID
