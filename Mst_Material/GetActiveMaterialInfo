@@ -1,6 +1,6 @@
 USE [Sap_Approval]
 GO
-/****** Object:  StoredProcedure [dbo].[GetActiveMaterialInfo]    Script Date: 18-06-2025 15:43:57 ******/
+/****** Object:  StoredProcedure [dbo].[GetActiveMaterialInfo]    Script Date: 20-06-2025 09:28:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17,7 +17,8 @@ BEGIN
         m.Material_Type,
 		m.Active_Status,
 		m.Supv_ID,
-		s.Sup_Code
+		 s.Sup_Code + ' - ' + s.Sup_Name AS Sup_Code,
+		s.Sup_Name
     FROM 
         Mst_Material m
     INNER JOIN 
