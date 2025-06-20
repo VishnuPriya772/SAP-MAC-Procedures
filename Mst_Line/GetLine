@@ -1,35 +1,32 @@
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[GetLine]    Script Date: 20-06-2025 09:15:06 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 ALTER Procedure [dbo].[GetLine]
  AS
 BEGIN
 
 SELECT
-s.Line_ID,
-s.Plant_ID,
-p.Plant_Code,
-s.Dept_ID,
-d.Dept_Name,
-s.Line_Name,
-C.Sup_Code,
-C.Supv_ID,
-M.Module_ID,M.Module_Name,
-s.Active_Status
-From Mst_Line s
-    INNER JOIN 
-        Mst_Plant p 
-    ON 
-        s.Plant_ID = p.Plant_ID
-		INNER JOIN 
-        Mst_Department d
-    ON 
-        s.Dept_ID = d.Dept_ID
-		INNER JOIN 
-        Mst_Module M
-    ON 
-        s.Module_ID = M.Module_ID
-		INNER JOIN 
-        Mst_SupvCode C
-    ON 
-        s.Supv_ID = C.Supv_ID
+    s.Line_ID,
+    s.Plant_ID,
+    p.Plant_Code,
+    s.Dept_ID,
+    d.Dept_Name,
+    s.Line_Name,
+    C.Sup_Code + ' - ' + C.Sup_Name AS Sup_Code,
+    C.Supv_ID,
+    M.Module_ID,
+    M.Module_Name,
+    s.Active_Status
+FROM Mst_Line s
+    INNER JOIN Mst_Plant p ON s.Plant_ID = p.Plant_ID
+    INNER JOIN Mst_Department d ON s.Dept_ID = d.Dept_ID
+    INNER JOIN Mst_Module M ON s.Module_ID = M.Module_ID
+    INNER JOIN Mst_SupvCode C ON s.Supv_ID = C.Supv_ID
+
 
 
     END
