@@ -1,0 +1,22 @@
+Alter PROCEDURE [dbo].[GetStorageDownloadData]
+AS
+BEGIN
+    SELECT
+        p.Plant_Code,
+       
+        s.SLoc_Name,
+        s.Storage_Code,
+        
+        s.Active_Status
+        
+    FROM Mst_Storage_Location s
+    INNER JOIN Mst_Plant p 
+      ON s.Plant_ID = p.Plant_ID
+    --INNER JOIN Mst_SupvCode_Mapping map
+    --    ON map.Sloc_ID = s.SLoc_ID
+    --INNER JOIN Mst_SupvCode m
+    --    ON m.Supv_ID = map.Supv_ID
+   ORDER BY
+        p.Plant_Code
+      
+END
