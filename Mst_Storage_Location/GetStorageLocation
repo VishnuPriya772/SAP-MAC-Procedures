@@ -1,3 +1,10 @@
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[GetStorageLocation]    Script Date: 23-06-2025 13:20:23 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 ALTER PROCEDURE [dbo].[GetStorageLocation]
 AS
 BEGIN
@@ -12,9 +19,9 @@ BEGIN
     FROM Mst_Storage_Location s
     INNER JOIN Mst_Plant p 
         ON s.Plant_ID = p.Plant_ID
-    INNER JOIN Mst_SupvCode_Mapping map
+    Left JOIN Mst_SupvCode_Mapping map
         ON map.Sloc_ID = s.SLoc_ID
-    INNER JOIN Mst_SupvCode m
+    Left JOIN Mst_SupvCode m
         ON m.Supv_ID = map.Supv_ID
     GROUP BY
         p.Plant_Code,
