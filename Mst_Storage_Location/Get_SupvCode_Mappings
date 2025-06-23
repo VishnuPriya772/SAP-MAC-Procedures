@@ -1,17 +1,19 @@
-Alter PROCEDURE Get_SupvCode_Mappings
+ALTER PROCEDURE [dbo].[Get_SupvCode_Mappings]
 AS
 BEGIN
-   
-       SELECT 
-        M.Sloc_ID,
+    SELECT 
+       -- M.Sloc_ID,
+        P.Plant_Code,           -- ✅ Get Plant_Code from Mst_Plant
         L.Storage_Code,
         L.SLoc_Name,
         S.Sup_Code,
         S.Sup_Name,
         M.Active_Status
-      FROM Mst_SupvCode_Mapping M
-      INNER JOIN Mst_Storage_Location L ON M.Sloc_ID = L.SLoc_ID
-      INNER JOIN Mst_SupvCode S ON M.Supv_ID = S.Supv_ID
-      WHERE M.Active_Status = 1;
-   
+    FROM Mst_SupvCode_Mapping M
+    INNER JOIN Mst_Storage_Location L ON M.Sloc_ID = L.SLoc_ID
+    INNER JOIN Mst_Plant P ON L.Plant_ID = P.Plant_ID          -- ✅ Join added
+    INNER JOIN Mst_SupvCode S ON M.Supv_ID = S.Supv_ID
+    WHERE M.Active_Status = 1 
+    ORDER BY
+        P.Plant_Code, L.Storage_Code
 END
