@@ -42,3 +42,26 @@ SELECT
   GETDATE() AS Created_On
 FROM RankedMappings
 WHERE rn <= 2;  -- ✅ Only insert 2 mappings per Sloc_ID
+
+
+
+
+SELECT 
+        Prdord_ID,
+        Plant_ID,
+        Order_Type,
+        Supv_ID,
+        Order_No,
+        Order_Date,
+        Issued_Date,
+        DATEDIFF(DAY, Order_Date, Issued_Date) AS LeadTime,
+        Material_No,
+        Material_Description,
+        Order_Qty,
+        Issued_Qty,
+        Created_By,
+        Created_On,
+        Modified_By,
+        Modified_On
+    FROM 
+        Trn_prod_order_status
