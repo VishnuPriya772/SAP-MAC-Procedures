@@ -95,3 +95,58 @@ CREATE TABLE Trn_Inward_Old_Invoice (
     Modified_By    VARCHAR(50),
     Modified_On    DATETIME
 );
+
+----5
+
+CREATE TABLE TrnSap_Order_creation (
+    Prdord_ID INT PRIMARY KEY,
+     Plant_ID INT,
+    Supv_ID INT,
+    Order_No VARCHAR(50),
+    Order_Date DATETIME,
+    Material_No VARCHAR(50),
+    Material_Description VARCHAR(255),
+    Order_Qty DECIMAL(18, 2),
+    Read_Status VARCHAR(20),
+    Created_By VARCHAR(100),
+    Created_On DATETIME,
+    Modified_By VARCHAR(100),
+    Modified_On DATETIME
+);
+
+
+---6
+
+CREATE TABLE TrnSap_Order_Issued (
+    Prdord_ID INT PRIMARY KEY,
+    Plant_ID INT,
+    Supv_ID INT,
+    Order_No VARCHAR(50),
+    Order_Date DATETIME,
+    Material_No VARCHAR(50),
+    Material_Description VARCHAR(255),
+    Issued_Qty DECIMAL(18, 2),
+    Read_Status VARCHAR(20),
+    Created_By VARCHAR(100),
+    Created_On DATETIME,
+    Modified_By VARCHAR(100),
+    Modified_On DATETIME
+);
+
+CREATE TABLE Trn_prod_order_status (
+    Prdord_ID INT PRIMARY KEY,
+     Plant_ID INT,
+    Order_Type VARCHAR(50),
+     Supv_ID INT,
+    Order_No VARCHAR(50),
+    Order_Date DATETIME,
+    Material_No VARCHAR(50),
+    Material_Description VARCHAR(255),
+    Order_Qty DECIMAL(18, 2),
+    Issued_Qty DECIMAL(18, 2),
+    Issued_Date DATETIME,
+    Created_By VARCHAR(100),
+    Created_On DATETIME,
+    Modified_By VARCHAR(100),
+    Modified_On DATETIME
+);
