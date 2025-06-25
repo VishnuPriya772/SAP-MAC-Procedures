@@ -2,23 +2,26 @@ ALTER PROCEDURE [dbo].[GetProductionOrderStatus]
 AS
 BEGIN
     SELECT 
+        ROW_NUMBER() OVER (ORDER BY TP.Prdord_ID) AS [S.No],  -- ✅ Auto-generated serial number
         TP.Prdord_ID,
         TP.Plant_ID,
         MP.Plant_Code,
         TP.Order_Type,
         TP.Supv_ID,
         STRING_AGG(CONCAT(MS.Sup_Code, ' - ', MS.Sup_Name), ', ') AS Sup_Name,
-        ML.Line_Name,  -- From Mst_Line
+        ML.Line_Name,
         TP.Order_No,
         FORMAT(TP.Order_Date, 'dd-MM-yyyy') AS Order_Date,
         FORMAT(TP.Issued_Date, 'dd-MM-yyyy') AS Issued_Date,
-       DATEDIFF(MINUTE, TP.Order_Date, TP.Issued_Date) AS LeadTime,
+        CAST(DATEDIFF(MINUTE, TP.Order_Date, TP.Issued_Date) / 1440 AS VARCHAR) + ' days ' +
+CAST((DATEDIFF(MINUTE, TP.Order_Date, TP.Issued_Date) % 1440) / 60 AS VARCHAR) + ' hours ' +
+CAST(DATEDIFF(MINUTE, TP.Order_Date, TP.Issued_Date) % 60 AS VARCHAR) + ' minutes' AS LeadTime,
 
         TP.Material_No,
         TP.Material_Description,
         TP.Order_Qty,
         TP.Issued_Qty,
-        (TP.Order_Qty - TP.Issued_Qty) AS Balanced_Qty  -- ✅ New calculated field
+        (TP.Order_Qty - TP.Issued_Qty) AS Balanced_Qty
     FROM 
         Trn_prod_order_status TP
     INNER JOIN 
