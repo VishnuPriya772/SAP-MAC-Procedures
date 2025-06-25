@@ -99,7 +99,7 @@ CREATE TABLE Trn_Inward_Old_Invoice (
 ----5
 
 CREATE TABLE TrnSap_Order_creation (
-    Prdord_ID INT PRIMARY KEY,
+    Prdord_ID INT IDENTITY(1,1) PRIMARY KEY,
      Plant_ID INT,
     Supv_ID INT,
     Order_No VARCHAR(50),
@@ -118,7 +118,7 @@ CREATE TABLE TrnSap_Order_creation (
 ---6
 
 CREATE TABLE TrnSap_Order_Issued (
-    Prdord_ID INT PRIMARY KEY,
+    Prdord_ID INT IDENTITY(1,1) PRIMARY KEY,
     Plant_ID INT,
     Supv_ID INT,
     Order_No VARCHAR(50),
@@ -134,7 +134,7 @@ CREATE TABLE TrnSap_Order_Issued (
 );
 
 CREATE TABLE Trn_prod_order_status (
-    Prdord_ID INT PRIMARY KEY,
+    Prdord_ID INT IDENTITY(1,1) PRIMARY KEY,
      Plant_ID INT,
     Order_Type VARCHAR(50),
      Supv_ID INT,
