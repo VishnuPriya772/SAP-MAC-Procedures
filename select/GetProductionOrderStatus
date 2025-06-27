@@ -1,0 +1,73 @@
+ALTER PROCEDURE [dbo].[GetProductionOrderStatus]
+    @PlantID VARCHAR(50) = NULL,
+    @StorageCode VARCHAR(50) = NULL
+AS
+BEGIN
+    SELECT 
+        TP.Prdord_ID,
+        TP.Plant_ID,
+        MP.Plant_Code AS TP_Plant_Code,
+        TP.Order_Type,
+        TP.Supv_ID,
+        CONCAT(MS.Sup_Code, ' - ', MS.Sup_Name) AS Sup_Name,
+        MSP.Plant_Code AS Supv_Plant_Code,
+        TP.Order_No,
+        FORMAT(TP.Order_Date, 'dd-MM-yyyy') AS Order_Date,
+        FORMAT(TP.Issued_Date, 'dd-MM-yyyy') AS Issued_Date,
+        FORMAT(DATEADD(SECOND, DATEDIFF(SECOND, OC.Created_On, OI.Created_On), 0), 'HH:mm:ss') AS LeadTime,
+        TP.Material_No,
+        TP.Material_Description,
+        TP.Order_Qty,
+        TP.Issued_Qty,
+        (TP.Order_Qty - TP.Issued_Qty) AS Balanced_Qty,
+        SL.Storage_Code,
+        SL.SLoc_Name
+    FROM 
+        Trn_prod_order_status TP
+    INNER JOIN 
+        Mst_Plant MP ON TP.Plant_ID = MP.Plant_ID
+    LEFT JOIN 
+        Mst_SupvCode MS ON TP.Supv_ID = MS.Supv_ID
+    LEFT JOIN 
+        Mst_Plant MSP ON MS.Plant_ID = MSP.Plant_ID
+    OUTER APPLY (
+        SELECT TOP 1 
+            ST.Storage_Code, ST.SLoc_Name
+        FROM Mst_SupvCode_Mapping MAP
+        INNER JOIN Mst_Storage_Location ST ON MAP.Sloc_ID = ST.SLoc_ID
+        WHERE 
+            MAP.Supv_ID = TP.Supv_ID 
+            AND ST.Plant_ID = TP.Plant_ID              -- ✅ Correct plant match
+            AND MAP.Active_Status = 1 
+            AND ST.Active_Status = 1
+        ORDER BY MAP.Sloc_ID
+    ) AS SL
+    INNER JOIN 
+        TrnSap_Order_creation OC ON TP.Prdord_ID = OC.Prdord_ID
+    INNER JOIN 
+        TrnSap_Order_Issued OI ON TP.Prdord_ID = OI.Prdord_ID
+    WHERE 
+        TP.Order_Type = 'New'
+        AND (@PlantID IS NULL OR MP.Plant_ID = @PlantID)
+        AND (@StorageCode IS NULL OR SL.Storage_Code = @StorageCode)
+    GROUP BY 
+        TP.Prdord_ID,
+        TP.Plant_ID,
+        MP.Plant_Code,
+        TP.Order_Type,
+        TP.Supv_ID,
+        MS.Sup_Code,
+        MS.Sup_Name,
+        MSP.Plant_Code,
+        TP.Order_No,
+        TP.Order_Date,
+        TP.Issued_Date,
+        TP.Material_No,
+        TP.Material_Description,
+        TP.Order_Qty,
+        TP.Issued_Qty,
+        OC.Created_On,
+        OI.Created_On,
+        SL.Storage_Code,
+        SL.SLoc_Name;
+END;
