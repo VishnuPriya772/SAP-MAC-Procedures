@@ -46,7 +46,8 @@ INNER JOIN
 INNER JOIN 
     TrnSap_Order_Issued OI ON TP.Prdord_ID = OI.Prdord_ID
 WHERE 
-    TP.Order_Type = 'New'
+    TP.Order_Type = 'New' AND
+	TP.Plant_ID=3
 GROUP BY 
     TP.Prdord_ID,
     TP.Plant_ID,
