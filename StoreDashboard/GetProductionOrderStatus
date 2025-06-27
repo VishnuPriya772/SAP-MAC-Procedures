@@ -1,8 +1,15 @@
+USE [Sap_Approval]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 ALTER PROCEDURE [dbo].[GetProductionOrderStatus]
 AS
 BEGIN
     SELECT 
-        ROW_NUMBER() OVER (ORDER BY TP.Prdord_ID) AS [S.No],  -- ✅ Auto-generated serial number
+        ROW_NUMBER() OVER (ORDER BY TP.Prdord_ID) AS [S.No],
         TP.Prdord_ID,
         TP.Plant_ID,
         MP.Plant_Code,
@@ -13,15 +20,19 @@ BEGIN
         TP.Order_No,
         FORMAT(TP.Order_Date, 'dd-MM-yyyy') AS Order_Date,
         FORMAT(TP.Issued_Date, 'dd-MM-yyyy') AS Issued_Date,
-        CAST(DATEDIFF(MINUTE, TP.Order_Date, TP.Issued_Date) / 1440 AS VARCHAR) + ' days ' +
-CAST((DATEDIFF(MINUTE, TP.Order_Date, TP.Issued_Date) % 1440) / 60 AS VARCHAR) + ' hours ' +
-CAST(DATEDIFF(MINUTE, TP.Order_Date, TP.Issued_Date) % 60 AS VARCHAR) + ' minutes' AS LeadTime,
+
+        -- Lead Time as hh:mm:ss
+        FORMAT(DATEADD(SECOND, DATEDIFF(SECOND, OC.Created_On, OI.Created_On), 0), 'HH:mm:ss') AS LeadTime,
 
         TP.Material_No,
         TP.Material_Description,
         TP.Order_Qty,
         TP.Issued_Qty,
-        (TP.Order_Qty - TP.Issued_Qty) AS Balanced_Qty
+        (TP.Order_Qty - TP.Issued_Qty) AS Balanced_Qty,
+
+        ST.Storage_Code,
+        ST.SLoc_Name
+
     FROM 
         Trn_prod_order_status TP
     INNER JOIN 
@@ -30,8 +41,18 @@ CAST(DATEDIFF(MINUTE, TP.Order_Date, TP.Issued_Date) % 60 AS VARCHAR) + ' minute
         Mst_SupvCode MS ON TP.Supv_ID = MS.Supv_ID
     INNER JOIN 
         Mst_Line ML ON TP.Supv_ID = ML.Supv_ID
+    INNER JOIN 
+        Mst_SupvCode_Mapping MAP ON TP.Supv_ID = MAP.Supv_ID
+    INNER JOIN 
+        Mst_Storage_Location ST ON MAP.Sloc_ID = ST.SLoc_ID
+    INNER JOIN 
+        TrnSap_Order_creation OC ON TP.Prdord_ID = OC.Prdord_ID
+    INNER JOIN 
+        TrnSap_Order_Issued OI ON TP.Prdord_ID = OI.Prdord_ID
     WHERE 
         TP.Order_Type = 'New'
+        AND MAP.Active_Status = 1
+        AND ST.Active_Status = 1
     GROUP BY 
         TP.Prdord_ID,
         TP.Plant_ID,
@@ -45,5 +66,9 @@ CAST(DATEDIFF(MINUTE, TP.Order_Date, TP.Issued_Date) % 60 AS VARCHAR) + ' minute
         TP.Material_No,
         TP.Material_Description,
         TP.Order_Qty,
-        TP.Issued_Qty;
+        TP.Issued_Qty,
+        OC.Created_On,
+        OI.Created_On,
+        ST.Storage_Code,
+        ST.SLoc_Name;
 END;
