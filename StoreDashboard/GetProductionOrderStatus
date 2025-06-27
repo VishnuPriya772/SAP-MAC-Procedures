@@ -1,68 +1,73 @@
+USE [Sap_Approval]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 
 ALTER PROCEDURE [dbo].[GetProductionOrderStatus]
 AS
 BEGIN
-    SELECT 
-        ROW_NUMBER() OVER (ORDER BY TP.Prdord_ID) AS [S.No],
-        TP.Prdord_ID,
-        TP.Plant_ID,
-        MP.Plant_Code,
-        TP.Order_Type,
-        TP.Supv_ID,
-        STRING_AGG(CONCAT(MS.Sup_Code, ' - ', MS.Sup_Name), ', ') AS Sup_Name,
-        --ML.Line_Name,
-        TP.Order_No,
-        FORMAT(TP.Order_Date, 'dd-MM-yyyy') AS Order_Date,
-        FORMAT(TP.Issued_Date, 'dd-MM-yyyy') AS Issued_Date,
+   SELECT 
+    ROW_NUMBER() OVER (ORDER BY TP.Prdord_ID) AS [S.No],
+    TP.Prdord_ID,
+    TP.Plant_ID,
+    MP.Plant_Code,
+    TP.Order_Type,
+    TP.Supv_ID,
+    CONCAT(MS.Sup_Code, ' - ', MS.Sup_Name) AS Sup_Name,
+    TP.Order_No,
+    FORMAT(TP.Order_Date, 'dd-MM-yyyy') AS Order_Date,
+    FORMAT(TP.Issued_Date, 'dd-MM-yyyy') AS Issued_Date,
+    FORMAT(DATEADD(SECOND, DATEDIFF(SECOND, OC.Created_On, OI.Created_On), 0), 'HH:mm:ss') AS LeadTime,
+    TP.Material_No,
+    TP.Material_Description,
+    TP.Order_Qty,
+    TP.Issued_Qty,
+    (TP.Order_Qty - TP.Issued_Qty) AS Balanced_Qty,
+    SL.Storage_Code,
+    SL.SLoc_Name
+FROM 
+    Trn_prod_order_status TP
+INNER JOIN 
+    Mst_Plant MP ON TP.Plant_ID = MP.Plant_ID
+LEFT JOIN 
+    Mst_SupvCode MS ON TP.Supv_ID = MS.Supv_ID
+OUTER APPLY (
+    SELECT TOP 1 
+        ST.Storage_Code, ST.SLoc_Name
+    FROM Mst_SupvCode_Mapping MAP
+    INNER JOIN Mst_Storage_Location ST ON MAP.Sloc_ID = ST.SLoc_ID
+    WHERE MAP.Supv_ID = TP.Supv_ID AND MAP.Active_Status = 1 AND ST.Active_Status = 1
+    ORDER BY MAP.Sloc_ID -- or any preferred order
+) AS SL
+INNER JOIN 
+    TrnSap_Order_creation OC ON TP.Prdord_ID = OC.Prdord_ID
+INNER JOIN 
+    TrnSap_Order_Issued OI ON TP.Prdord_ID = OI.Prdord_ID
+WHERE 
+    TP.Order_Type = 'New'
+GROUP BY 
+    TP.Prdord_ID,
+    TP.Plant_ID,
+    MP.Plant_Code,
+    TP.Order_Type,
+    TP.Supv_ID,
+    MS.Sup_Code,
+    MS.Sup_Name,
+    TP.Order_No,
+    TP.Order_Date,
+    TP.Issued_Date,
+    TP.Material_No,
+    TP.Material_Description,
+    TP.Order_Qty,
+    TP.Issued_Qty,
+    OC.Created_On,
+    OI.Created_On,
+    SL.Storage_Code,
+    SL.SLoc_Name;
 
-        -- Lead Time as hh:mm:ss
-        FORMAT(DATEADD(SECOND, DATEDIFF(SECOND, OC.Created_On, OI.Created_On), 0), 'HH:mm:ss') AS LeadTime,
-
-        TP.Material_No,
-        TP.Material_Description,
-        TP.Order_Qty,
-        TP.Issued_Qty,
-        (TP.Order_Qty - TP.Issued_Qty) AS Balanced_Qty,
-
-        ST.Storage_Code,
-        ST.SLoc_Name
-
-    FROM 
-        Trn_prod_order_status TP
-    INNER JOIN 
-        Mst_Plant MP ON TP.Plant_ID = MP.Plant_ID
-    INNER JOIN 
-        Mst_SupvCode MS ON TP.Supv_ID = MS.Supv_ID
-    --INNER JOIN 
-    --    Mst_Line ML ON TP.Supv_ID = ML.Supv_ID
-    INNER JOIN 
-        Mst_SupvCode_Mapping MAP ON TP.Supv_ID = MAP.Supv_ID
-    INNER JOIN 
-        Mst_Storage_Location ST ON MAP.Sloc_ID = ST.SLoc_ID
-    INNER JOIN 
-        TrnSap_Order_creation OC ON TP.Prdord_ID = OC.Prdord_ID
-    INNER JOIN 
-        TrnSap_Order_Issued OI ON TP.Prdord_ID = OI.Prdord_ID
-    WHERE 
-        TP.Order_Type = 'New'
-        AND MAP.Active_Status = 1
-        AND ST.Active_Status = 1
-    GROUP BY 
-        TP.Prdord_ID,
-        TP.Plant_ID,
-        MP.Plant_Code,
-        TP.Order_Type,
-        TP.Supv_ID,
-       -- ML.Line_Name,
-        TP.Order_No,
-        TP.Order_Date,
-        TP.Issued_Date,
-        TP.Material_No,
-        TP.Material_Description,
-        TP.Order_Qty,
-        TP.Issued_Qty,
-        OC.Created_On,
-        OI.Created_On,
-        ST.Storage_Code,
-        ST.SLoc_Name
 END;
+
+
+
