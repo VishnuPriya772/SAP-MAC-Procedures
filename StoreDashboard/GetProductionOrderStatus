@@ -1,9 +1,3 @@
-USE [Sap_Approval]
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 
 ALTER PROCEDURE [dbo].[GetProductionOrderStatus]
 AS
@@ -16,7 +10,7 @@ BEGIN
         TP.Order_Type,
         TP.Supv_ID,
         STRING_AGG(CONCAT(MS.Sup_Code, ' - ', MS.Sup_Name), ', ') AS Sup_Name,
-        ML.Line_Name,
+        --ML.Line_Name,
         TP.Order_No,
         FORMAT(TP.Order_Date, 'dd-MM-yyyy') AS Order_Date,
         FORMAT(TP.Issued_Date, 'dd-MM-yyyy') AS Issued_Date,
@@ -39,8 +33,8 @@ BEGIN
         Mst_Plant MP ON TP.Plant_ID = MP.Plant_ID
     INNER JOIN 
         Mst_SupvCode MS ON TP.Supv_ID = MS.Supv_ID
-    INNER JOIN 
-        Mst_Line ML ON TP.Supv_ID = ML.Supv_ID
+    --INNER JOIN 
+    --    Mst_Line ML ON TP.Supv_ID = ML.Supv_ID
     INNER JOIN 
         Mst_SupvCode_Mapping MAP ON TP.Supv_ID = MAP.Supv_ID
     INNER JOIN 
@@ -59,7 +53,7 @@ BEGIN
         MP.Plant_Code,
         TP.Order_Type,
         TP.Supv_ID,
-        ML.Line_Name,
+       -- ML.Line_Name,
         TP.Order_No,
         TP.Order_Date,
         TP.Issued_Date,
@@ -70,5 +64,5 @@ BEGIN
         OC.Created_On,
         OI.Created_On,
         ST.Storage_Code,
-        ST.SLoc_Name;
+        ST.SLoc_Name
 END;
