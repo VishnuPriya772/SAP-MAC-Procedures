@@ -9,13 +9,14 @@ ALTER PROCEDURE [dbo].[GetProductionOrderStatus]
 AS
 BEGIN
    SELECT 
-    ROW_NUMBER() OVER (ORDER BY TP.Prdord_ID) AS [S.No],
+    
     TP.Prdord_ID,
     TP.Plant_ID,
-    MP.Plant_Code,
+    MP.Plant_Code AS TP_Plant_Code,                 -- From production order
     TP.Order_Type,
     TP.Supv_ID,
     CONCAT(MS.Sup_Code, ' - ', MS.Sup_Name) AS Sup_Name,
+    MSP.Plant_Code AS Supv_Plant_Code,              -- ✅ From Mst_SupvCode's Plant_ID
     TP.Order_No,
     FORMAT(TP.Order_Date, 'dd-MM-yyyy') AS Order_Date,
     FORMAT(TP.Issued_Date, 'dd-MM-yyyy') AS Issued_Date,
@@ -30,24 +31,28 @@ BEGIN
 FROM 
     Trn_prod_order_status TP
 INNER JOIN 
-    Mst_Plant MP ON TP.Plant_ID = MP.Plant_ID
+    Mst_Plant MP ON TP.Plant_ID = MP.Plant_ID         -- Main plant mapping
 LEFT JOIN 
-    Mst_SupvCode MS ON TP.Supv_ID = MS.Supv_ID
+    Mst_SupvCode MS ON TP.Supv_ID = MS.Supv_ID        -- Supervisor data
+LEFT JOIN 
+    Mst_Plant MSP ON MS.Plant_ID = MSP.Plant_ID       -- ✅ Supv Plant Code mapping
 OUTER APPLY (
     SELECT TOP 1 
         ST.Storage_Code, ST.SLoc_Name
     FROM Mst_SupvCode_Mapping MAP
     INNER JOIN Mst_Storage_Location ST ON MAP.Sloc_ID = ST.SLoc_ID
-    WHERE MAP.Supv_ID = TP.Supv_ID AND MAP.Active_Status = 1 AND ST.Active_Status = 1
-    ORDER BY MAP.Sloc_ID -- or any preferred order
+    WHERE MAP.Supv_ID = TP.Supv_ID 
+      AND MAP.Active_Status = 1 
+      AND ST.Active_Status = 1
+    ORDER BY MAP.Sloc_ID
 ) AS SL
 INNER JOIN 
     TrnSap_Order_creation OC ON TP.Prdord_ID = OC.Prdord_ID
 INNER JOIN 
     TrnSap_Order_Issued OI ON TP.Prdord_ID = OI.Prdord_ID
 WHERE 
-    TP.Order_Type = 'New' AND
-	TP.Plant_ID=3
+    TP.Order_Type = 'New'
+    AND TP.Plant_ID = 3
 GROUP BY 
     TP.Prdord_ID,
     TP.Plant_ID,
@@ -56,6 +61,7 @@ GROUP BY
     TP.Supv_ID,
     MS.Sup_Code,
     MS.Sup_Name,
+    MSP.Plant_Code,               -- ✅ Add to GROUP BY
     TP.Order_No,
     TP.Order_Date,
     TP.Issued_Date,
@@ -67,7 +73,6 @@ GROUP BY
     OI.Created_On,
     SL.Storage_Code,
     SL.SLoc_Name;
-
 END;
 
 
