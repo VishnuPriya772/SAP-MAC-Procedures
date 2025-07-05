@@ -12,12 +12,14 @@ CREATE TABLE Mst_Company (
     Com_ID INT IDENTITY(1,1) PRIMARY KEY,
     Com_code INT,
     Com_Name NVARCHAR(255),
+    CompanyLogo NVARCHAR(255),
     Active_Status BIT,
     Created_By INT,
     Created_On DATETIME,
     Modified_By INT,
     Modified_On DATETIME
 );
+  
   
 
 --T 2 Mst Plant
