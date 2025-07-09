@@ -17,6 +17,7 @@ SELECT * FROM Mst_User_Level
 SELECT * FROM Mst_Screen
 SELECT * FROM Mst_Sap_Login
 SELECT * FROM Mst_SupvCode;
+SELECT * FROM Mst_SupvCode_Mapping;
 SELECT * FROM Mst_Module;
 SELECT * FROM Mst_Line;
 SELECT * FROM Trn_Inward_Old_Invoice;
