@@ -1,0 +1,49 @@
+ALTER PROCEDURE [dbo].[GetProductionOrderSummaryForClosed]
+    @PlantID VARCHAR(50) = NULL,
+    @StorageCode VARCHAR(50) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+   SELECT
+    TP.Prdord_ID,
+    ML.Line_Name,
+	OC.Prdord_ID AS [No.Of Orders],
+    OI.Prdord_ID AS [No Order Close], -- since coming from Issued, it's considered Closed
+    CASE 
+        WHEN OI.Created_On <= DATEADD(SECOND, 
+                DATEDIFF(SECOND, 0, TRY_CAST(MS.Sup_Lead_Time AS TIME)), OC.Created_On)
+        THEN 1 ELSE 0 
+    END AS [Issue Posted on Time],
+    CASE 
+        WHEN OI.Created_On > DATEADD(SECOND, 
+                DATEDIFF(SECOND, 0, TRY_CAST(MS.Sup_Lead_Time AS TIME)), OC.Created_On)
+        THEN 1 ELSE 0 
+    END AS [Issue Posted Delay]
+FROM 
+    Trn_prod_order_status TP
+INNER JOIN TrnSap_Order_creation OC 
+    ON TP.Prdord_ID = OC.Prdord_ID
+INNER JOIN TrnSap_Order_Issued OI 
+    ON TP.Prdord_ID = OI.Prdord_ID
+INNER JOIN Mst_SupvCode MS 
+    ON TP.Supv_ID = MS.Supv_ID
+INNER JOIN Mst_Line ML 
+    ON ML.Supv_ID = MS.Supv_ID AND ML.Active_Status = 1
+INNER JOIN (
+    SELECT 
+        MAP.Supv_ID, ST.Plant_ID, ST.Storage_Code
+    FROM 
+        Mst_SupvCode_Mapping MAP
+    INNER JOIN Mst_Storage_Location ST 
+        ON MAP.Sloc_ID = ST.SLoc_ID
+    WHERE 
+        MAP.Active_Status = 1 AND ST.Active_Status = 1
+) AS SL 
+    ON SL.Supv_ID = TP.Supv_ID 
+    AND SL.Plant_ID = TP.Plant_ID
+    AND (@StorageCode IS NULL OR SL.Storage_Code = @StorageCode)
+WHERE
+    TP.Order_Type = 'Closed'
+	  AND (@PlantID IS NULL OR TP.Plant_ID = @PlantID)
+END;
