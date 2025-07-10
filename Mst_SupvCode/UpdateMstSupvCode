@@ -1,7 +1,7 @@
 Alter PROCEDURE [dbo].[UpdateMstSupvCode]  
     @Supv_ID INT,  
     @Sup_Name NVARCHAR(200),  
-      
+     @Supv_Lead_Time INT, 
     @ActiveStatus BIT,  
     @UserID VARCHAR(20),  
     @StatusCode INT OUTPUT -- New output parameter  
@@ -24,7 +24,7 @@ END
     SET   
          
         Sup_Name = @Sup_Name,  
-       
+       Supv_Lead_Time=@Supv_Lead_Time,
         Active_Status = @ActiveStatus,  
         Modified_By = @UserID,  
         Modified_On = GETDATE()  
