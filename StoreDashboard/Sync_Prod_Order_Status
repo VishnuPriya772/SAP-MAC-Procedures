@@ -1,4 +1,4 @@
-CREATE  OR ALTER PROCEDURE Sync_Prod_Order_Status
+CREATE OR ALTER PROCEDURE Sync_Prod_Order_Status
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -27,13 +27,18 @@ BEGIN
         c.Material_Description,
         c.Order_Qty,
         c.Created_By,
-        ms.Supv_ID,
-        ms.Supv_Lead_Time,
+        full_ms.Supv_ID,
+        full_ms.Supv_Lead_Time,
         0,
         GETDATE()
     FROM TrnSap_Order_creation c
     LEFT JOIN Mst_Plant mp ON c.Plant_Code = mp.Plant_Code
-    LEFT JOIN Mst_SupvCode ms ON c.Sup_Code = ms.Sup_Code
+    LEFT JOIN (
+        SELECT Sup_Code, MAX(Supv_ID) AS Supv_ID
+        FROM Mst_SupvCode
+        GROUP BY Sup_Code
+    ) ms ON c.Sup_Code = ms.Sup_Code
+    LEFT JOIN Mst_SupvCode full_ms ON ms.Supv_ID = full_ms.Supv_ID
     WHERE NOT EXISTS (
         SELECT 1 FROM Trn_Prod_Order_Status s WHERE s.Order_No = c.Order_No
     )
