@@ -26,4 +26,4 @@ TRUNCATE TABLE Trn_SapTransfer_Records;
 TRUNCATE TABLE Trn_Approval_History;
 TRUNCATE TABLE Trn_prod_order_status;
 TRUNCATE TABLE TrnSap_Order_creation;
-TRUNCATE TABLE TrnSap_Order_Issued;
+TRUNCATE TABLE TrnSap_Order_Closed;
