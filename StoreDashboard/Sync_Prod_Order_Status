@@ -1,0 +1,50 @@
+CREATE PROCEDURE Sync_Prod_Order_Status
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Insert new orders from TrnSap_Order_creation to Trn_Prod_Order_Status
+    INSERT INTO Trn_Prod_Order_Status (
+        Plant_ID,
+        Order_Type,
+        Order_Created_Date,
+        Order_No,
+        Material_No,
+        Material_Description,
+        Order_Qty,
+        Order_Created_By,
+        Supv_ID,
+        Supv_Lead_Time,
+        Created_By,
+        Created_On
+    )
+    SELECT
+        mp.Plant_ID,
+        'New',
+        c.Order_Date,
+        c.Order_No,
+        c.Material_No,
+        c.Material_Description,
+        c.Order_Qty,
+        c.Created_By,
+        ms.Supv_ID,
+        ms.Supv_Lead_Time,
+        0, -- Created_By system user
+        GETDATE()
+    FROM TrnSap_Order_creation c
+    LEFT JOIN Mst_Plant mp ON c.Plant_Code = mp.Plant_Code
+    LEFT JOIN Mst_SupvCode ms ON c.Sup_Code = ms.Sup_Code
+    WHERE NOT EXISTS (
+        SELECT 1 FROM Trn_Prod_Order_Status s WHERE s.Order_No = c.Order_No
+    );
+
+    -- Update orders as closed based on TrnSap_Order_Closed
+    UPDATE s
+    SET
+        s.Order_Type = 'Closed',
+        s.Order_Closed_Date = cl.OrderClosed_Date,
+        s.Modified_By = cl.Modified_By,
+        s.Modified_On = cl.Modified_On
+    FROM Trn_Prod_Order_Status s
+    INNER JOIN TrnSap_Order_Closed cl ON s.Order_No = cl.Order_No;
+END;
