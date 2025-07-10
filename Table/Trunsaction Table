@@ -99,54 +99,58 @@ CREATE TABLE Trn_Inward_Old_Invoice (
 ----5
 
 CREATE TABLE TrnSap_Order_creation (
-    Prdord_ID INT IDENTITY(1,1) PRIMARY KEY,
-     Plant_ID INT,
-    Supv_ID INT,
-    Order_No VARCHAR(50),
+    Ordcre_ID INT IDENTITY(1,1) PRIMARY KEY,
+    Company_Code VARCHAR(10),
+    Plant_Code VARCHAR(10),
+    Sloc_Code VARCHAR(250),
+    Sup_Code VARCHAR(10),
+    Order_No VARCHAR(20),
     Order_Date DATETIME,
     Material_No VARCHAR(50),
-    Material_Description VARCHAR(255),
-    Order_Qty DECIMAL(18, 2),
-    Read_Status VARCHAR(20),
-    Created_By VARCHAR(100),
+    Material_Description VARCHAR(250),
+    Order_Qty NUMERIC(10, 0),
+    Read_Status BIT,
+    Created_By VARCHAR(50),
     Created_On DATETIME,
-    Modified_By VARCHAR(100),
+    Modified_By INT,
     Modified_On DATETIME
 );
+
 
 
 ---6
 
-CREATE TABLE TrnSap_Order_Issued (
-    Prdord_ID INT IDENTITY(1,1) PRIMARY KEY,
-    Plant_ID INT,
-    Supv_ID INT,
-    Order_No VARCHAR(50),
-    Order_Date DATETIME,
-    Material_No VARCHAR(50),
-    Material_Description VARCHAR(255),
-    Issued_Qty DECIMAL(18, 2),
-    Read_Status VARCHAR(20),
-    Created_By VARCHAR(100),
+CREATE TABLE TrnSap_Order_Closed (
+    Ordcld_ID INT IDENTITY(1,1) PRIMARY KEY,
+    Company_Code VARCHAR(20),
+    Plant_Code VARCHAR(20),
+    Order_No VARCHAR(20),
+    OrderClosed_Date DATETIME,
+    Created_By VARCHAR(50),
     Created_On DATETIME,
-    Modified_By VARCHAR(100),
-    Modified_On DATETIME
+    Modified_By INT,
+    Modified_On DATETIME,
+    Read_Status BIT
 );
 
-CREATE TABLE Trn_prod_order_status (
+
+CREATE TABLE Trn_Prod_Order_Status (
     Prdord_ID INT IDENTITY(1,1) PRIMARY KEY,
-     Plant_ID INT,
+    Plant_ID INT FOREIGN KEY REFERENCES Mst_Plant(Plant_ID),
     Order_Type VARCHAR(50),
-     Supv_ID INT,
-    Order_No VARCHAR(50),
-    Order_Date DATETIME,
+    Order_Created_Date DATETIME,
+    Order_No VARCHAR(20),
     Material_No VARCHAR(50),
-    Material_Description VARCHAR(255),
-    Order_Qty DECIMAL(18, 2),
-    Issued_Qty DECIMAL(18, 2),
-    Issued_Date DATETIME,
-    Created_By VARCHAR(100),
+    Material_Description VARCHAR(250),
+    Order_Qty VARCHAR(10),
+    Order_Created_By VARCHAR(50),
+    Supv_ID INT FOREIGN KEY REFERENCES Mst_SupvCode(Supv_ID),
+    Supv_Lead_Time INT FOREIGN KEY REFERENCES Mst_SupvCode(Supv_Lead_Time),
+    Order_Closed_Date DATETIME,
+    Issue_Duration_Time INT,
+    Ontime_or_Delay VARCHAR(10),
+    Created_By INT,
     Created_On DATETIME,
-    Modified_By VARCHAR(100),
+    Modified_By INT,
     Modified_On DATETIME
 );
