@@ -136,7 +136,7 @@ CREATE TABLE TrnSap_Order_Closed (
 
 CREATE TABLE Trn_Prod_Order_Status (
     Prdord_ID INT IDENTITY(1,1) PRIMARY KEY,
-    Plant_ID INT FOREIGN KEY REFERENCES Mst_Plant(Plant_ID),
+    Plant_ID INT ,
     Order_Type VARCHAR(50),
     Order_Created_Date DATETIME,
     Order_No VARCHAR(20),
@@ -144,8 +144,8 @@ CREATE TABLE Trn_Prod_Order_Status (
     Material_Description VARCHAR(250),
     Order_Qty VARCHAR(10),
     Order_Created_By VARCHAR(50),
-    Supv_ID INT FOREIGN KEY REFERENCES Mst_SupvCode(Supv_ID),
-    Supv_Lead_Time INT FOREIGN KEY REFERENCES Mst_SupvCode(Supv_Lead_Time),
+    Supv_ID INT ,
+    Supv_Lead_Time INT ,
     Order_Closed_Date DATETIME,
     Issue_Duration_Time INT,
     Ontime_or_Delay VARCHAR(10),
