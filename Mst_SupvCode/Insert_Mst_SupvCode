@@ -1,15 +1,8 @@
-USE [Sap_Approval]
-GO
-/****** Object:  StoredProcedure [dbo].[Insert_Mst_SupvCode]    Script Date: 18-06-2025 18:17:31 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 ALTER PROCEDURE [dbo].[Insert_Mst_SupvCode]  
      @Plant_Code INT,  
     @Sup_Code Varchar(50),  
     @Sup_Name VARCHAR(100),  
-   
+   @Supv_Lead_Time INT,
     @Active_Status BIT,  
     @UserID VARCHAR(50)  
      
@@ -17,10 +10,10 @@ ALTER PROCEDURE [dbo].[Insert_Mst_SupvCode]
 AS  
 BEGIN  
     INSERT INTO Mst_SupvCode(  
-    Plant_ID, Sup_Code, Sup_Name, Active_Status, Created_By, Created_On  
+    Plant_ID, Sup_Code, Sup_Name,Supv_Lead_Time, Active_Status, Created_By, Created_On  
 )  
 VALUES (  
-    @Plant_Code, @Sup_Code, @Sup_Name, @Active_Status, @UserID, GETDATE()  
+    @Plant_Code, @Sup_Code, @Sup_Name,@Supv_Lead_Time, @Active_Status, @UserID, GETDATE()  
 );  
   
   
