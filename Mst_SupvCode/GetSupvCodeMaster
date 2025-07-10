@@ -1,5 +1,12 @@
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[GetSupvCodeMaster]    Script Date: 10-07-2025 15:57:40 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 
- create Procedure [dbo].[GetSupvCodeMaster]
+ ALTER Procedure [dbo].[GetSupvCodeMaster]
  AS
 BEGIN
 
@@ -8,6 +15,7 @@ p.Plant_Code,
 s.Supv_ID,
 s.Sup_Name,
 s.Sup_Code,
+s.Supv_Lead_Time,
 s.Active_Status
 From Mst_SupvCode s
     INNER JOIN 
