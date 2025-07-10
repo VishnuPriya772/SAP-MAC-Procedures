@@ -1,9 +1,9 @@
-CREATE PROCEDURE Sync_Prod_Order_Status
+CREATE  OR ALTER PROCEDURE Sync_Prod_Order_Status
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- Step 1: Insert only new (open) orders into Trn_Prod_Order_Status
+    -- Step 1: Insert NEW Orders (not already in Trn_Prod_Order_Status, and not already closed)
     INSERT INTO Trn_Prod_Order_Status (
         Plant_ID,
         Order_Type,
@@ -41,7 +41,7 @@ BEGIN
         SELECT 1 FROM TrnSap_Order_Closed cl WHERE cl.Order_No = c.Order_No
     );
 
-    -- Step 2: Update existing orders as Closed
+    -- Step 2: Update Orders as CLOSED if they exist in both tables
     UPDATE s
     SET
         s.Order_Type = 'Closed',
@@ -51,7 +51,7 @@ BEGIN
     FROM Trn_Prod_Order_Status s
     INNER JOIN TrnSap_Order_Closed cl ON s.Order_No = cl.Order_No;
 
-    -- Step 3: Mark Read_Status = 1 in TrnSap_Order_creation
+    -- Step 3: Set Read_Status = 1 in TrnSap_Order_creation
     UPDATE c
     SET c.Read_Status = 1
     FROM TrnSap_Order_creation c
@@ -59,7 +59,7 @@ BEGIN
         SELECT 1 FROM Trn_Prod_Order_Status s WHERE s.Order_No = c.Order_No
     );
 
-    -- Step 4: Mark Read_Status = 1 in TrnSap_Order_Closed
+    -- Step 4: Set Read_Status = 1 in TrnSap_Order_Closed
     UPDATE cl
     SET cl.Read_Status = 1
     FROM TrnSap_Order_Closed cl
