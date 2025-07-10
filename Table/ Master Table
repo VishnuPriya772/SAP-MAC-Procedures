@@ -271,6 +271,7 @@ CREATE TABLE Mst_SupvCode (
     Plant_ID INT,
     Sup_Code NVARCHAR(50),
     Sup_Name NVARCHAR(100),
+	Supv_Lead_Time INT,
     Active_Status BIT,
     Created_By INT,
     Created_On DATETIME,
