@@ -3,7 +3,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- Insert new orders from TrnSap_Order_creation to Trn_Prod_Order_Status
+    -- Step 1: Insert only new (open) orders into Trn_Prod_Order_Status
     INSERT INTO Trn_Prod_Order_Status (
         Plant_ID,
         Order_Type,
@@ -29,16 +29,19 @@ BEGIN
         c.Created_By,
         ms.Supv_ID,
         ms.Supv_Lead_Time,
-        0, -- Created_By system user
+        0,
         GETDATE()
     FROM TrnSap_Order_creation c
     LEFT JOIN Mst_Plant mp ON c.Plant_Code = mp.Plant_Code
     LEFT JOIN Mst_SupvCode ms ON c.Sup_Code = ms.Sup_Code
     WHERE NOT EXISTS (
         SELECT 1 FROM Trn_Prod_Order_Status s WHERE s.Order_No = c.Order_No
+    )
+    AND NOT EXISTS (
+        SELECT 1 FROM TrnSap_Order_Closed cl WHERE cl.Order_No = c.Order_No
     );
 
-    -- Update orders as closed based on TrnSap_Order_Closed
+    -- Step 2: Update existing orders as Closed
     UPDATE s
     SET
         s.Order_Type = 'Closed',
@@ -47,4 +50,20 @@ BEGIN
         s.Modified_On = cl.Modified_On
     FROM Trn_Prod_Order_Status s
     INNER JOIN TrnSap_Order_Closed cl ON s.Order_No = cl.Order_No;
+
+    -- Step 3: Mark Read_Status = 1 in TrnSap_Order_creation
+    UPDATE c
+    SET c.Read_Status = 1
+    FROM TrnSap_Order_creation c
+    WHERE EXISTS (
+        SELECT 1 FROM Trn_Prod_Order_Status s WHERE s.Order_No = c.Order_No
+    );
+
+    -- Step 4: Mark Read_Status = 1 in TrnSap_Order_Closed
+    UPDATE cl
+    SET cl.Read_Status = 1
+    FROM TrnSap_Order_Closed cl
+    WHERE EXISTS (
+        SELECT 1 FROM Trn_Prod_Order_Status s WHERE s.Order_No = cl.Order_No
+    );
 END;
