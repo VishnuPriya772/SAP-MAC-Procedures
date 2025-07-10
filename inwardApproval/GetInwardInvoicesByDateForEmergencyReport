@@ -1,3 +1,10 @@
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[GetInwardInvoicesByDateForEmergencyReport]    Script Date: 10-07-2025 18:35:14 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 ALTER PROCEDURE [dbo].[GetInwardInvoicesByDateForEmergencyReport]
    
     @FromDate DATE,
@@ -27,7 +34,7 @@ BEGIN
         u.User_Name AS Created_By,
 
         -- Approved By (from latest approval history)
-        u.User_Name AS Approved_By,
+        um.User_Name AS Modified_By,
 
         -- Approval Date (last modification date from approval history)
         CONVERT(VARCHAR(20), i.Modified_On, 120) AS Approved_Date
@@ -41,6 +48,10 @@ BEGIN
        Mst_User u
     ON 
        i.Created_By =u.User_ID
+	   INNER JOIN 
+       Mst_User um
+    ON 
+       i.Modified_By =um.User_ID
 	   INNER JOIN 
        Mst_Plant p
     ON 
