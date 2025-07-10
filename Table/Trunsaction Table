@@ -154,3 +154,5 @@ CREATE TABLE Trn_Prod_Order_Status (
     Modified_By INT,
     Modified_On DATETIME
 );
+ALTER TABLE Trn_Prod_Order_Status
+ADD CONSTRAINT UQ_OrderNo UNIQUE (Order_No);
