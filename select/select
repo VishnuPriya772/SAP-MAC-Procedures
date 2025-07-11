@@ -26,4 +26,6 @@ SELECT * FROM Trn_SapTransfer_Records;
 SELECT * FROM Trn_Approval_History;
 SELECT * FROM Trn_prod_order_status;
 SELECT * FROM TrnSap_Order_creation;
-SELECT * FROM TrnSap_Order_Issued
+SELECT * FROM TrnSap_Order_Closed
+
+
