@@ -41,18 +41,16 @@ BEGIN
         c.Material_Description,
         c.Order_Qty,
         c.Created_By,
-        full_ms.Supv_ID,
-        full_ms.Supv_Lead_Time,
-        0,
+        ms.Supv_ID,
+        ms.Supv_Lead_Time,
+        1,
         GETDATE()
     FROM DistinctOrders c
-    LEFT JOIN Mst_Plant mp ON c.Plant_Code = mp.Plant_Code
-    LEFT JOIN (
-        SELECT Sup_Code, MAX(Supv_ID) AS Supv_ID
-        FROM Mst_SupvCode
-        GROUP BY Sup_Code
-    ) ms ON c.Sup_Code = ms.Sup_Code
-    LEFT JOIN Mst_SupvCode full_ms ON ms.Supv_ID = full_ms.Supv_ID
+    LEFT JOIN Mst_Plant mp 
+        ON c.Plant_Code = mp.Plant_Code
+    LEFT JOIN Mst_SupvCode ms 
+        ON ms.Sup_Code = c.Sup_Code 
+        AND ms.Plant_ID = mp.Plant_ID
     WHERE c.rn = 1
     AND NOT EXISTS (
         SELECT 1 FROM Trn_Prod_Order_Status s WHERE s.Order_No = c.Order_No
@@ -67,9 +65,22 @@ BEGIN
         s.Order_Type = 'Closed',
         s.Order_Closed_Date = cl.OrderClosed_Date,
         s.Modified_By = cl.Modified_By,
-        s.Modified_On = cl.Modified_On
+        s.Modified_On = cl.Modified_On,
+        s.Issue_Duration_Time = 
+            CASE 
+                WHEN DATEDIFF(MINUTE, s.Order_Created_Date, cl.OrderClosed_Date) > s.Supv_Lead_Time 
+                THEN DATEDIFF(MINUTE, s.Order_Created_Date, cl.OrderClosed_Date) - s.Supv_Lead_Time 
+                ELSE 0 
+            END,
+        s.Ontime_or_Delay = 
+            CASE 
+                WHEN DATEDIFF(MINUTE, s.Order_Created_Date, cl.OrderClosed_Date) <= s.Supv_Lead_Time 
+                THEN 'OnTime' 
+                ELSE 'Delay' 
+            END
     FROM Trn_Prod_Order_Status s
-    INNER JOIN TrnSap_Order_Closed cl ON s.Order_No = cl.Order_No;
+    INNER JOIN TrnSap_Order_Closed cl 
+        ON s.Order_No = cl.Order_No;
 
     -- Step 3: Set Read_Status = 1 in TrnSap_Order_creation
     UPDATE c
