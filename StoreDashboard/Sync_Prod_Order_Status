@@ -1,9 +1,23 @@
-CREATE OR ALTER PROCEDURE Sync_Prod_Order_Status
+USE [Sap_Approval]
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER PROCEDURE [dbo].[Sync_Prod_Order_Status]
 AS
 BEGIN
     SET NOCOUNT ON;
 
     -- Step 1: Insert NEW Orders (not already in Trn_Prod_Order_Status, and not already closed)
+    ;WITH DistinctOrders AS (
+        SELECT 
+            *,
+            ROW_NUMBER() OVER (PARTITION BY Order_No ORDER BY Order_Date DESC) AS rn
+        FROM TrnSap_Order_creation
+    )
     INSERT INTO Trn_Prod_Order_Status (
         Plant_ID,
         Order_Type,
@@ -31,7 +45,7 @@ BEGIN
         full_ms.Supv_Lead_Time,
         0,
         GETDATE()
-    FROM TrnSap_Order_creation c
+    FROM DistinctOrders c
     LEFT JOIN Mst_Plant mp ON c.Plant_Code = mp.Plant_Code
     LEFT JOIN (
         SELECT Sup_Code, MAX(Supv_ID) AS Supv_ID
@@ -39,7 +53,8 @@ BEGIN
         GROUP BY Sup_Code
     ) ms ON c.Sup_Code = ms.Sup_Code
     LEFT JOIN Mst_SupvCode full_ms ON ms.Supv_ID = full_ms.Supv_ID
-    WHERE NOT EXISTS (
+    WHERE c.rn = 1
+    AND NOT EXISTS (
         SELECT 1 FROM Trn_Prod_Order_Status s WHERE s.Order_No = c.Order_No
     )
     AND NOT EXISTS (
