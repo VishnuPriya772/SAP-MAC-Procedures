@@ -1,0 +1,52 @@
+CREATE OR ALTER PROCEDURE GetStore1OpenOrders_ByDate
+    @PlantID INT = NULL,
+  
+    @fromDate DATE = NULL,
+    @toDate DATE = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        TP.Prdord_ID,
+        TP.Plant_ID,
+        MP.Plant_Code AS TP_Plant_Code,
+        TP.Order_Type,
+        TP.Supv_ID,
+        CONCAT(MS.Sup_Code, ' - ', MS.Sup_Name) AS Sup_Name,
+        MSP.Plant_Code AS Supv_Plant_Code,
+        TP.Order_No,
+        FORMAT(TP.Order_Created_Date, 'dd-MM-yyyy') AS Order_Date,
+        FORMAT(TP.Order_Closed_Date, 'dd-MM-yyyy') AS Issued_Date,
+        TP.Issue_Duration_Time,
+        TP.Material_No,
+        TP.Material_Description,
+        TP.Order_Qty,
+        DATEDIFF(MINUTE, OC.Created_On, GETDATE()) AS Delay_Time,
+        ST.Storage_Code AS Creation_Storage_Code,
+        ST.SLoc_Name AS Creation_SLoc_Name
+    FROM 
+        Trn_prod_order_status TP
+    INNER JOIN Mst_Plant MP ON TP.Plant_ID = MP.Plant_ID
+    LEFT JOIN Mst_SupvCode MS ON TP.Supv_ID = MS.Supv_ID
+    LEFT JOIN Mst_Plant MSP ON MS.Plant_ID = MSP.Plant_ID
+    INNER JOIN (
+        SELECT *
+        FROM (
+            SELECT *, ROW_NUMBER() OVER (PARTITION BY Order_No ORDER BY Created_On DESC) AS rn
+            FROM TrnSap_Order_creation
+        ) x
+        WHERE rn = 1
+    ) OC ON OC.Order_No = TP.Order_No
+    LEFT JOIN Mst_Storage_Location ST 
+        ON OC.Sloc_Code = ST.Storage_Code AND ST.Active_Status = 1
+    WHERE 
+        TP.Order_Type = 'New' AND
+        (@PlantID IS NULL OR TP.Plant_ID = @PlantID) AND
+       
+        (
+            (@fromDate IS NULL AND @toDate IS NULL)
+            OR
+            (TP.Order_Created_Date BETWEEN @fromDate AND @toDate)
+        );
+END
