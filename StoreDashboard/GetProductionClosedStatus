@@ -5,7 +5,6 @@ BEGIN
     SET NOCOUNT ON;
 
     SELECT 
-	    TP.Prdord_ID,
         SC.Supv_ID,
         CONCAT(SC.Sup_Code, ' - ', SC.Sup_Name) AS Sup_Name,
         COUNT(TP.Prdord_ID) AS [No.Of Orders],
@@ -31,5 +30,5 @@ BEGIN
     WHERE TP.Order_Type = 'Closed'
       AND (@Sloc_Code IS NULL OR OC.Sloc_Code = @Sloc_Code)
 
-    GROUP BY SC.Supv_ID, SC.Sup_Code, SC.Sup_Name,TP.Prdord_ID;
+    GROUP BY SC.Supv_ID, SC.Sup_Code, SC.Sup_Name;
 END;
