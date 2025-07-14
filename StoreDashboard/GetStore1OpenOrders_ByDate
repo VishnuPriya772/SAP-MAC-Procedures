@@ -1,5 +1,13 @@
-CREATE OR ALTER PROCEDURE GetStore1OpenOrders_ByDate
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[GetStore1OpenOrders_ByDate]    Script Date: 14-07-2025 13:28:28 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER   PROCEDURE [dbo].[GetStore1OpenOrders_ByDate]
     @PlantID INT = NULL,
+	  @StorageCode VARCHAR(50) = NULL,
     @fromDate DATE = NULL,
     @toDate DATE = NULL
 AS
@@ -40,11 +48,13 @@ BEGIN
     LEFT JOIN Mst_Storage_Location ST 
         ON OC.Sloc_Code = ST.Storage_Code AND ST.Active_Status = 1
     WHERE 
-        TP.Order_Type = 'New' AND
+       
         (@PlantID IS NULL OR TP.Plant_ID = @PlantID) AND
+		 (@StorageCode IS NULL OR ST.Storage_Code = @StorageCode)AND
         (
             (@fromDate IS NULL AND @toDate IS NULL)
             OR
             (CAST(TP.Order_Created_Date AS DATE) BETWEEN @fromDate AND @toDate)
         );
 END
+
