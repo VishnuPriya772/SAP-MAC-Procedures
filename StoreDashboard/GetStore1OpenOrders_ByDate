@@ -1,6 +1,5 @@
 CREATE OR ALTER PROCEDURE GetStore1OpenOrders_ByDate
     @PlantID INT = NULL,
-  
     @fromDate DATE = NULL,
     @toDate DATE = NULL
 AS
@@ -43,10 +42,9 @@ BEGIN
     WHERE 
         TP.Order_Type = 'New' AND
         (@PlantID IS NULL OR TP.Plant_ID = @PlantID) AND
-       
         (
             (@fromDate IS NULL AND @toDate IS NULL)
             OR
-            (TP.Order_Created_Date BETWEEN @fromDate AND @toDate)
+            (CAST(TP.Order_Created_Date AS DATE) BETWEEN @fromDate AND @toDate)
         );
 END
