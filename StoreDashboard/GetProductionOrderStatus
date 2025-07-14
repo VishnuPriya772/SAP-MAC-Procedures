@@ -1,3 +1,11 @@
+USE [Sap_Approval]
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 ALTER PROCEDURE [dbo].[GetProductionOrderStatus]
     @PlantID VARCHAR(50) = NULL,
     @StorageCode VARCHAR(50) = NULL
@@ -21,10 +29,12 @@ BEGIN
         TP.Material_Description,
         TP.Order_Qty,
 
-        -- Get Storage_Code based on Sloc_Code from creation table
+        -- Delay Time in Minutes
+        DATEDIFF(MINUTE, OC.Created_On, GETDATE()) AS Delay_Time,
+
+        -- Storage Code Info
         ST.Storage_Code AS Creation_Storage_Code,
-        ST.SLoc_Name AS Creation_SLoc_Name,
-		DATEDIFF(MINUTE, OC.Created_On, GETDATE()) AS Delay_Time
+        ST.SLoc_Name AS Creation_SLoc_Name
 
     FROM 
         Trn_prod_order_status TP
@@ -36,13 +46,16 @@ BEGIN
     LEFT JOIN Mst_SupvCode MS ON TP.Supv_ID = MS.Supv_ID
     LEFT JOIN Mst_Plant MSP ON MS.Plant_ID = MSP.Plant_ID
 
-    -- OUTER APPLY to get only 1 matching row from Order Creation
-    OUTER APPLY (
-        SELECT TOP 1 * 
-        FROM TrnSap_Order_creation OC 
-        WHERE OC.Order_No = TP.Order_No
-        ORDER BY OC.Created_On DESC -- Or by any preferred column
-    ) OC
+    -- Join latest matching Order Creation row
+    INNER JOIN (
+        SELECT *
+        FROM (
+            SELECT *,
+                   ROW_NUMBER() OVER (PARTITION BY Order_No ORDER BY Created_On DESC) AS rn
+            FROM TrnSap_Order_creation
+        ) x
+        WHERE rn = 1
+    ) OC ON OC.Order_No = TP.Order_No
 
     -- Join Storage Location Table using Sloc_Code
     LEFT JOIN Mst_Storage_Location ST ON OC.Sloc_Code = ST.Storage_Code AND ST.Active_Status = 1
