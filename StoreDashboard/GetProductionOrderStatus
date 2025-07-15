@@ -30,7 +30,10 @@ BEGIN
         TP.Order_Qty,
 
         -- Delay Time in Minutes
-       FORMAT(DATEADD(MINUTE, DATEDIFF(MINUTE, OC.Created_On, GETDATE()), 0), 'HH:mm') AS Delay_Time,
+       --FORMAT(DATEADD(MINUTE, DATEDIFF(MINUTE, OC.Created_On, GETDATE()), 0), 'HH:mm') AS Delay_Time,
+	   -- Delay Time in HH:MM format
+RIGHT('0' + CAST(DATEDIFF(MINUTE, OC.Created_On, GETDATE()) / 60 AS VARCHAR), 2) + ':' +
+RIGHT('0' + CAST(DATEDIFF(MINUTE, OC.Created_On, GETDATE()) % 60 AS VARCHAR), 2) AS Delay_Time,
 
 
         -- Storage Code Info
