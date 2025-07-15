@@ -1,0 +1,43 @@
+INSERT INTO TrnSap_Order_creation (
+   Company_Code,
+   Plant_Code,
+    Sup_Code,
+	Sloc_Code,
+    Order_No,
+    Order_Date,
+    Material_No,
+    Material_Description,
+    Order_Qty,
+    Created_By,
+    Created_On,
+    Read_Status
+)
+VALUES 
+-- Order 1
+('1000',1150,'003' ,'1150', 'OR1672001', '2025-07-15 13:38:45.983', 's1', 'Steel Rod 10mm', 500, 1,'2025-07-15 13:38:45.983',  0),
+-- Order 2
+('1000',1150, '002','1151', 'OR162002', '2025-07-10 07:41:54.833', 's2', 'Copper Wire 5mm', 300, 1,'2025-07-10 07:41:54.833',  0),
+-- Duplicate Order (will be ignored in procedure)
+('1000',1150, '003','1152', 'OR1624001', '2025-07-10 06:42:11.877', 's3', 'Steel Rod 10mm', 500, 1,'2025-07-10 06:42:11.877',  0);
+
+SELECT DATEADD(HOUR, 1, GETDATE()) AS OneHourAgo;
+
+
+INSERT INTO TrnSap_Order_Closed (
+   Company_Code,
+   Plant_Code,
+   
+   Order_No,
+    OrderClosed_Date,
+    Modified_By,
+    Modified_On,
+    Read_Status
+)
+VALUES 
+-- Closing Order 1
+('1000','1150','OR12001', '2025-07-14 09:43:17.997', 2, '2025-07-11 14:05:00', 0),
+-- Closing another order not in creation (will update if already in status)
+('1000','1150','OR12002', '2025-07-14 10:44:59.430', 2, '2025-07-10 13:10:00', 0),
+('1000','1150','OR124001', '2025-07-14 11:45:21.330', 2, '2025-07-10 13:10:00', 0);
+
+Exec Sync_Prod_Order_Status
