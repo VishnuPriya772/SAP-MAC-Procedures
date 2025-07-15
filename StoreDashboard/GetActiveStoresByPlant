@@ -1,0 +1,15 @@
+CREATE OR ALTER PROCEDURE GetActiveStoresByPlant
+    @PlantID INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        Storage_Code, 
+        SLoc_Name
+    FROM 
+        Mst_Storage_Location
+    WHERE 
+        Plant_ID = @PlantID
+        AND Active_Status = 1;
+END;
