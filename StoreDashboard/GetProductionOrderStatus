@@ -28,7 +28,7 @@ BEGIN
         TP.Material_No,
         TP.Material_Description,
         TP.Order_Qty,
-
+		MS.Supv_Lead_Time,
         -- Delay Time in Minutes
        --FORMAT(DATEADD(MINUTE, DATEDIFF(MINUTE, OC.Created_On, GETDATE()), 0), 'HH:mm') AS Delay_Time,
 	   -- Delay Time in HH:MM format
