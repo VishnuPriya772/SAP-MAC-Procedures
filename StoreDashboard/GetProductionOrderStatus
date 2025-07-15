@@ -1,6 +1,6 @@
 USE [Sap_Approval]
 GO
-
+/****** Object:  StoredProcedure [dbo].[GetProductionOrderStatus]    Script Date: 15-07-2025 14:23:47 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -30,7 +30,8 @@ BEGIN
         TP.Order_Qty,
 
         -- Delay Time in Minutes
-        DATEDIFF(MINUTE, OC.Created_On, GETDATE()) AS Delay_Time,
+       FORMAT(DATEADD(MINUTE, DATEDIFF(MINUTE, OC.Created_On, GETDATE()), 0), 'HH:mm') AS Delay_Time,
+
 
         -- Storage Code Info
         ST.Storage_Code AS Creation_Storage_Code,
