@@ -79,5 +79,8 @@ RIGHT('0' + CAST(MS.Supv_Lead_Time % 60 AS VARCHAR), 2) AS Supv_Lead_Time,
     WHERE   
         TP.Order_Type = 'New'  
         AND (@PlantID IS NULL OR TP.Plant_ID = @PlantID)  
-        AND (@StorageCode IS NULL OR ST.Storage_Code = @StorageCode);  
+        AND (@StorageCode IS NULL OR ST.Storage_Code = @StorageCode)
+		ORDER BY TP.Order_Created_Date ASC;
+
+
 END
