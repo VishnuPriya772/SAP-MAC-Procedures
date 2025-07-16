@@ -37,8 +37,10 @@ BEGIN
         WHERE rn = 1
     ) OC ON TP.Order_No = OC.Order_No
 
-    WHERE TP.Order_Type = 'Closed'
-      AND (@Sloc_Code IS NULL OR OC.Sloc_Code = @Sloc_Code)
+    WHERE
+--TP.Order_Type = 'Closed'
+    --  AND
+(@Sloc_Code IS NULL OR OC.Sloc_Code = @Sloc_Code)
 	  AND (
             (@fromDate IS NULL AND @toDate IS NULL) OR
             (CAST(TP.Order_Closed_Date AS DATE) BETWEEN @fromDate AND @toDate)
