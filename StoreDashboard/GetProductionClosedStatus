@@ -29,14 +29,14 @@ BEGIN
     ) OC ON TP.Order_No = OC.Order_No
 
     WHERE 
-       -- TP.Order_Type = 'Closed'
-      --  AND
+        TP.Order_Type = 'Closed'
+        AND
 		(
             (TP.Order_Type = 'Closed' AND CAST(TP.Order_Closed_Date AS DATE) = CAST(GETDATE() AS DATE))
             OR
             (TP.Order_Type = 'New' AND CAST(TP.Created_On AS DATE) = CAST(GETDATE() AS DATE))
         )
-        AND (@Sloc_Code IS NULL OR OC.Sloc_Code = @Sloc_Code)
+       -- AND (@Sloc_Code IS NULL OR OC.Sloc_Code = @Sloc_Code)
 
     GROUP BY SC.Supv_ID, SC.Sup_Code, SC.Sup_Name;
 END;
