@@ -1,6 +1,6 @@
 USE [Sap_Approval]
 GO
-
+/****** Object:  StoredProcedure [dbo].[Sync_Prod_Order_Status]    Script Date: 16-07-2025 18:36:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -13,9 +13,7 @@ BEGIN
 
     -- Step 1: Insert NEW Orders (not already in Trn_Prod_Order_Status, and not already closed)
     ;WITH DistinctOrders AS (
-        SELECT 
-            *,
-            ROW_NUMBER() OVER (PARTITION BY Order_No ORDER BY Order_Date DESC) AS rn
+        SELECT *, ROW_NUMBER() OVER (PARTITION BY Order_No ORDER BY Order_Date DESC) AS rn
         FROM TrnSap_Order_creation
     )
     INSERT INTO Trn_Prod_Order_Status (
@@ -49,38 +47,31 @@ BEGIN
     LEFT JOIN Mst_Plant mp 
         ON c.Plant_Code = mp.Plant_Code
     LEFT JOIN Mst_SupvCode ms 
-        ON ms.Sup_Code = c.Sup_Code 
-        AND ms.Plant_ID = mp.Plant_ID
+        ON ms.Sup_Code = c.Sup_Code AND ms.Plant_ID = mp.Plant_ID
     WHERE c.rn = 1
-    AND NOT EXISTS (
-        SELECT 1 FROM Trn_Prod_Order_Status s WHERE s.Order_No = c.Order_No
-    )
-    AND NOT EXISTS (
-        SELECT 1 FROM TrnSap_Order_Closed cl WHERE cl.Order_No = c.Order_No
-    );
+        AND NOT EXISTS (SELECT 1 FROM Trn_Prod_Order_Status s WHERE s.Order_No = c.Order_No)
+        AND NOT EXISTS (SELECT 1 FROM TrnSap_Order_Closed cl WHERE cl.Order_No = c.Order_No);
 
     -- Step 2: Update Orders as CLOSED if they exist in both tables
+        -- Step 2: Update Orders as CLOSED if they exist in both tables
     UPDATE s
     SET
         s.Order_Type = 'Closed',
         s.Order_Closed_Date = cl.OrderClosed_Date,
         s.Modified_By = cl.Modified_By,
         s.Modified_On = cl.Modified_On,
-        s.Issue_Duration_Time = 
-            CASE 
-                WHEN DATEDIFF(MINUTE, s.Order_Created_Date, cl.OrderClosed_Date) > s.Supv_Lead_Time 
-                THEN DATEDIFF(MINUTE, s.Order_Created_Date, cl.OrderClosed_Date) - s.Supv_Lead_Time 
-                ELSE 0 
-            END,
+        s.Issue_Duration_Time = DATEDIFF(MINUTE, s.Order_Created_Date, cl.OrderClosed_Date),
         s.Ontime_or_Delay = 
             CASE 
-                WHEN DATEDIFF(MINUTE, s.Order_Created_Date, cl.OrderClosed_Date) <= s.Supv_Lead_Time 
-                THEN 'OnTime' 
-                ELSE 'Delay' 
+                WHEN DATEDIFF(MINUTE, s.Order_Created_Date, cl.OrderClosed_Date) <= s.Supv_Lead_Time THEN 'g'
+                WHEN DATEDIFF(MINUTE, s.Order_Created_Date, cl.OrderClosed_Date) <= s.Supv_Lead_Time + 60 THEN 'y'
+                ELSE 'r'
             END
     FROM Trn_Prod_Order_Status s
     INNER JOIN TrnSap_Order_Closed cl 
-        ON s.Order_No = cl.Order_No;
+        ON s.Order_No = cl.Order_No
+    WHERE s.Order_Type != 'Closed';
+
 
     -- Step 3: Set Read_Status = 1 in TrnSap_Order_creation
     UPDATE c
