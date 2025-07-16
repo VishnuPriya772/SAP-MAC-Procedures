@@ -1,4 +1,11 @@
-CREATE OR ALTER PROCEDURE GetProductionClosedStatusDate
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[GetProductionClosedStatusDate]    Script Date: 16-07-2025 12:06:53 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER   PROCEDURE [dbo].[GetProductionClosedStatusDate]
     @Sloc_Code VARCHAR(50) = NULL , -- Optional filter parameter
 	  @fromDate DATE = NULL,
     @toDate DATE = NULL
@@ -6,14 +13,14 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    SELECT 
-	    TP.Prdord_ID,
+     SELECT 
         SC.Supv_ID,
         CONCAT(SC.Sup_Code, ' - ', SC.Sup_Name) AS Sup_Name,
-        COUNT(TP.Prdord_ID) AS [No.Of Orders],
-        COUNT(CASE WHEN TP.Order_Type = 'Closed' THEN 1 END) AS [No Order Close],
-        COUNT(CASE WHEN TP.Ontime_or_Delay = 'Ontime' THEN 1 END) AS [Issue Posted on Time],
-        COUNT(CASE WHEN TP.Ontime_or_Delay = 'Delay' THEN 1 END) AS [Issue Posted Delay]
+        COUNT(TP.Prdord_ID) AS [No_Of_Orders],
+        COUNT(CASE WHEN TP.Order_Type = 'Closed' THEN 1 END) AS [No_Order_Close],
+        COUNT(CASE WHEN TP.Order_Type = 'New' THEN 1 END) AS [No_Of_Open_Orders], -- 🔹 New line
+        COUNT(CASE WHEN TP.Ontime_or_Delay = 'Ontime' THEN 1 END) AS [Issue_Posted_on_Time],
+        COUNT(CASE WHEN TP.Ontime_or_Delay = 'Delay' THEN 1 END) AS [Issue_Posted_Delay]
     FROM Trn_prod_order_status TP
 
     -- Join Supervisor
@@ -36,5 +43,5 @@ BEGIN
             (@fromDate IS NULL AND @toDate IS NULL) OR
             (CAST(TP.Order_Closed_Date AS DATE) BETWEEN @fromDate AND @toDate)
         )
-    GROUP BY SC.Supv_ID, SC.Sup_Code, SC.Sup_Name,TP.Prdord_ID;
+     GROUP BY SC.Supv_ID, SC.Sup_Code, SC.Sup_Name;
 END;
