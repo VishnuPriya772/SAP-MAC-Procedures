@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE GetProductionClosedStatus
+ALTER PROCEDURE [dbo].[GetProductionClosedStatus]
     @Sloc_Code VARCHAR(50) = NULL  -- Optional filter parameter
 AS
 BEGIN
@@ -7,40 +7,36 @@ BEGIN
     SELECT 
         SC.Supv_ID,
         CONCAT(SC.Sup_Code, ' - ', SC.Sup_Name) AS Sup_Name,
+        COUNT(TP.Prdord_ID) AS [No_Of_Orders],
+        COUNT(CASE WHEN TP.Order_Type = 'Closed' THEN 1 END) AS [No_Order_Close],
+        COUNT(CASE WHEN TP.Order_Type = 'New' THEN 1 END) AS [No_Of_Open_Orders], -- 🔹 New line
+        COUNT(CASE WHEN TP.Ontime_or_Delay = 'Ontime' THEN 1 END) AS [Issue_Posted_on_Time],
+        COUNT(CASE WHEN TP.Ontime_or_Delay = 'Delay' THEN 1 END) AS [Issue_Posted_Delay]
+    FROM Trn_prod_order_status TP
 
-        -- Total created orders
-        COUNT(DISTINCT OC.Ordcre_ID) AS [No. of Orders],
+    -- Join Supervisor
+    LEFT JOIN Mst_SupvCode SC ON TP.Supv_ID = SC.Supv_ID
 
-        -- Total closed orders (via Order_No)
-        COUNT(DISTINCT C.Ordcld_ID) AS [No. of Orders Closed],
-
-        -- On-time / Delay
-        COUNT(CASE WHEN TP.Ontime_or_Delay = 'Ontime' THEN 1 END) AS [Issue Posted on Time],
-        COUNT(CASE WHEN TP.Ontime_or_Delay = 'Delay' THEN 1 END) AS [Issue Posted Delay]
-
-    FROM TrnSap_Order_creation OC
-
-    -- Join supervisor from creation table
-    INNER JOIN Mst_SupvCode SC ON OC.Sup_Code = SC.Sup_Code
-
-    -- Join closed orders via Order_No
-    LEFT JOIN TrnSap_Order_Closed C ON OC.Order_No = C.Order_No
-
-    -- Join production status via Order_No + Supv_ID
-    LEFT JOIN Trn_prod_order_status TP ON TP.Order_No = OC.Order_No AND TP.Supv_ID = SC.Supv_ID
-
-    -- Optional Sloc filter (latest per order)
+    -- Join to TrnSap_Order_creation to get Sloc_Code
     LEFT JOIN (
         SELECT Order_No, Sloc_Code
         FROM (
             SELECT *,
                    ROW_NUMBER() OVER (PARTITION BY Order_No ORDER BY Created_On DESC) AS rn
             FROM TrnSap_Order_creation
-        ) AS sub
+        ) OC
         WHERE rn = 1
-    ) AS OC_SLOC ON OC.Order_No = OC_SLOC.Order_No
+    ) OC ON TP.Order_No = OC.Order_No
 
-   WHERE (@Sloc_Code IS NULL OR OC_SLOC.Sloc_Code = @Sloc_Code)
+    WHERE 
+       -- TP.Order_Type = 'Closed'
+      --  AND
+		(
+            (TP.Order_Type = 'Closed' AND CAST(TP.Order_Closed_Date AS DATE) = CAST(GETDATE() AS DATE))
+            OR
+            (TP.Order_Type = 'New' AND CAST(TP.Created_On AS DATE) = CAST(GETDATE() AS DATE))
+        )
+        AND (@Sloc_Code IS NULL OR OC.Sloc_Code = @Sloc_Code)
 
     GROUP BY SC.Supv_ID, SC.Sup_Code, SC.Sup_Name;
 END;
