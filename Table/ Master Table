@@ -173,7 +173,7 @@ CREATE TABLE Mst_Movement_List_Item (
 CREATE TABLE Mst_Vendor (
     Vendor_ID INT IDENTITY(1,1) PRIMARY KEY,
     Plant_ID INT,
-    Vendor_Code INT,
+    Vendor_Code Varchar(100),
     Vendor_Name NVARCHAR(255),
     Vendor_Address NVARCHAR(255),
     Active_Status BIT,
@@ -182,7 +182,6 @@ CREATE TABLE Mst_Vendor (
     Modified_By INT,
     Modified_On DATETIME
 );
-
 --T 13 Mst Customer
 
 CREATE TABLE Mst_Customer (
