@@ -1,6 +1,6 @@
 USE [Sap_Approval]
 GO
-/****** Object:  StoredProcedure [dbo].[GetProductionClosedStatusDate]    Script Date: 16-07-2025 12:06:53 ******/
+/****** Object:  StoredProcedure [dbo].[GetProductionClosedStatusDate]    Script Date: 17-07-2025 15:36:54 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -12,15 +12,15 @@ ALTER   PROCEDURE [dbo].[GetProductionClosedStatusDate]
 AS
 BEGIN
     SET NOCOUNT ON;
-
-     SELECT 
+SELECT 
         SC.Supv_ID,
         CONCAT(SC.Sup_Code, ' - ', SC.Sup_Name) AS Sup_Name,
         COUNT(TP.Prdord_ID) AS [No_Of_Orders],
         COUNT(CASE WHEN TP.Order_Type = 'Closed' THEN 1 END) AS [No_Order_Close],
         COUNT(CASE WHEN TP.Order_Type = 'New' THEN 1 END) AS [No_Of_Open_Orders], -- 🔹 New line
-        COUNT(CASE WHEN TP.Ontime_or_Delay = 'Ontime' THEN 1 END) AS [Issue_Posted_on_Time],
-        COUNT(CASE WHEN TP.Ontime_or_Delay = 'Delay' THEN 1 END) AS [Issue_Posted_Delay]
+        COUNT(CASE WHEN TP.Ontime_or_Delay = 'g' THEN 1 END) AS [Issue_Posted_on_Time],
+		 COUNT(CASE WHEN TP.Ontime_or_Delay = 'y' THEN 1 END) AS [Issue_Posted_Delay60],
+        COUNT(CASE WHEN TP.Ontime_or_Delay = 'r' THEN 1 END) AS [Issue_Posted_Delay]
     FROM Trn_prod_order_status TP
 
     -- Join Supervisor
@@ -37,10 +37,10 @@ BEGIN
         WHERE rn = 1
     ) OC ON TP.Order_No = OC.Order_No
 
-    WHERE
---TP.Order_Type = 'Closed'
-    --  AND
-(@Sloc_Code IS NULL OR OC.Sloc_Code = @Sloc_Code)
+    WHERE 
+	--TP.Order_Type = 'Closed'
+     -- AND 
+	  (@Sloc_Code IS NULL OR OC.Sloc_Code = @Sloc_Code)
 	  AND (
             (@fromDate IS NULL AND @toDate IS NULL) OR
             (CAST(TP.Order_Closed_Date AS DATE) BETWEEN @fromDate AND @toDate)
