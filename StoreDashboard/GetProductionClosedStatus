@@ -1,3 +1,10 @@
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[GetProductionClosedStatus]    Script Date: 17-07-2025 15:12:22 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 ALTER PROCEDURE [dbo].[GetProductionClosedStatus]
     @Sloc_Code VARCHAR(50) = NULL  -- Optional filter parameter
 AS
@@ -10,8 +17,9 @@ BEGIN
         COUNT(TP.Prdord_ID) AS [No_Of_Orders],
         COUNT(CASE WHEN TP.Order_Type = 'Closed' THEN 1 END) AS [No_Order_Close],
         COUNT(CASE WHEN TP.Order_Type = 'New' THEN 1 END) AS [No_Of_Open_Orders], -- 🔹 New line
-        COUNT(CASE WHEN TP.Ontime_or_Delay = 'Ontime' THEN 1 END) AS [Issue_Posted_on_Time],
-        COUNT(CASE WHEN TP.Ontime_or_Delay = 'Delay' THEN 1 END) AS [Issue_Posted_Delay]
+        COUNT(CASE WHEN TP.Ontime_or_Delay = 'g' THEN 1 END) AS [Issue_Posted_on_Time],
+		 COUNT(CASE WHEN TP.Ontime_or_Delay = 'y' THEN 1 END) AS [Issue_Posted_Delay60],
+        COUNT(CASE WHEN TP.Ontime_or_Delay = 'r' THEN 1 END) AS [Issue_Posted_Delay]
     FROM Trn_prod_order_status TP
 
     -- Join Supervisor
@@ -29,14 +37,14 @@ BEGIN
     ) OC ON TP.Order_No = OC.Order_No
 
     WHERE 
-      --  TP.Order_Type = 'Closed'
-      --  AND
+        --TP.Order_Type = 'Closed'
+        --AND
 		(
             (TP.Order_Type = 'Closed' AND CAST(TP.Order_Closed_Date AS DATE) = CAST(GETDATE() AS DATE))
             OR
             (TP.Order_Type = 'New' AND CAST(TP.Created_On AS DATE) = CAST(GETDATE() AS DATE))
         )
-       -- AND (@Sloc_Code IS NULL OR OC.Sloc_Code = @Sloc_Code)
+        AND (@Sloc_Code IS NULL OR OC.Sloc_Code = @Sloc_Code)
 
     GROUP BY SC.Supv_ID, SC.Sup_Code, SC.Sup_Name;
 END;
