@@ -1,4 +1,11 @@
-Create PROCEDURE [dbo].[GetProductionOrderStatusForUrl]    
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[GetProductionOrderStatusForUrl]    Script Date: 18-07-2025 15:24:10 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[GetProductionOrderStatusForUrl]    
     @PlantCode VARCHAR(50) = NULL,    
     @StorageCode VARCHAR(50) = NULL    
 AS    
@@ -50,11 +57,11 @@ BEGIN
         WHERE rn = 1    
     ) OC ON OC.Order_No = TP.Order_No    
     LEFT JOIN Mst_Storage_Location ST ON OC.Sloc_Code = ST.Storage_Code AND ST.Active_Status = 1    
-    CROSS APPLY (    
-        SELECT     
-            DelayInMinutes = DATEDIFF(MINUTE, OC.Created_On, GETDATE()),    
-            LeadTimeMinutes = COALESCE(MS.Supv_Lead_Time, 0)    
-    ) CA    
+     CROSS APPLY (  
+        SELECT   
+            DelayInMinutes = DATEDIFF(MINUTE, OC.Order_Date, GETDATE()),  
+            LeadTimeMinutes = COALESCE(MS.Supv_Lead_Time, 0)  -- ✅ fixed: no * 60  
+    ) CA  
     
     WHERE     
         TP.Order_Type = 'New'    
