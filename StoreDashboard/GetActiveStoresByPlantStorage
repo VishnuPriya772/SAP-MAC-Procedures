@@ -1,0 +1,23 @@
+Alter   PROCEDURE GetActiveStoresByPlantStorage  
+    @PlantCode VARCHAR(50) = NULL,    
+    @Storage_Code VARCHAR(50) = NULL    
+AS    
+BEGIN    
+    SET NOCOUNT ON;
+
+    DECLARE @PlantID INT;
+
+    -- Lookup Plant_ID from Mst_Plant using Plant_Code
+    SELECT @PlantID = Plant_ID FROM Mst_Plant WHERE Plant_Code = @PlantCode; 
+  
+    SELECT   
+           
+        SLoc_Name  
+    FROM   
+        Mst_Storage_Location  
+    WHERE   
+        Plant_ID = @PlantID And
+		Storage_Code=@Storage_Code 
+        AND Active_Status = 1;  
+END;  
+
