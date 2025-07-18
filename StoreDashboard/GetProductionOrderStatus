@@ -1,6 +1,6 @@
 USE [Sap_Approval]
 GO
-/****** Object:  StoredProcedure [dbo].[GetProductionOrderStatus]    Script Date: 15-07-2025 17:24:54 ******/
+/****** Object:  StoredProcedure [dbo].[GetProductionOrderStatus]    Script Date: 18-07-2025 14:57:06 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -72,7 +72,7 @@ RIGHT('0' + CAST(MS.Supv_Lead_Time % 60 AS VARCHAR), 2) AS Supv_Lead_Time,
     -- ✅ CROSS APPLY for accurate delay and lead time comparison  
     CROSS APPLY (  
         SELECT   
-            DelayInMinutes = DATEDIFF(MINUTE, OC.Created_On, GETDATE()),  
+            DelayInMinutes = DATEDIFF(MINUTE, OC.Order_Date, GETDATE()),  
             LeadTimeMinutes = COALESCE(MS.Supv_Lead_Time, 0)  -- ✅ fixed: no * 60  
     ) CA  
   
