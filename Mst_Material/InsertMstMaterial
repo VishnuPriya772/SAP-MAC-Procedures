@@ -1,6 +1,6 @@
 USE [Sap_Approval]
 GO
-/****** Object:  StoredProcedure [dbo].[InsertMstMaterial]    Script Date: 18-06-2025 15:33:24 ******/
+/****** Object:  StoredProcedure [dbo].[InsertMstMaterial]    Script Date: 21-07-2025 09:06:58 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8,7 +8,7 @@ GO
 ALTER PROCEDURE [dbo].[InsertMstMaterial]
     @PlantCode INT,
     @MaterialCode VARCHAR(50),
-	@Supv_ID INT,
+	
     @Description VARCHAR(255),
     @MaterialType VARCHAR(50),
     @Rate DECIMAL(18, 2),
@@ -17,8 +17,8 @@ ALTER PROCEDURE [dbo].[InsertMstMaterial]
 AS
 BEGIN
     -- Insert the new material data into Mst_Material table
-    INSERT INTO Mst_Material (Plant_ID,Supv_ID ,Material_Code, Description, Material_Type, Rate, Active_Status, Created_By, Created_On)
-    VALUES (@PlantCode,@Supv_ID, @MaterialCode, @Description, @MaterialType, @Rate, @ActiveStatus, @UserID, GETDATE());
+    INSERT INTO Mst_Material (Plant_ID,Material_Code, Description, Material_Type, Rate, Active_Status, Created_By, Created_On)
+    VALUES (@PlantCode, @MaterialCode, @Description, @MaterialType, @Rate, @ActiveStatus, @UserID, GETDATE());
     
     -- Optional: Return a success message or status
     SELECT 'Record inserted successfully' AS Message;
