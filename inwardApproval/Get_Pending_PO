@@ -1,0 +1,10 @@
+CREATE PROCEDURE Get_Pending_PO
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT *
+    FROM Trn_Inward_Old_Invoice
+    WHERE Inward_Type = 'E'
+      AND (Purchase_Order IS NULL OR LTRIM(RTRIM(Purchase_Order)) = '');
+END;
