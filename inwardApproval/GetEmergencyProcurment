@@ -1,3 +1,10 @@
+USE [Sap_Approval]
+GO
+/****** Object:  StoredProcedure [dbo].[GetEmergencyProcurment]    Script Date: 21-07-2025 14:06:05 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 ALTER PROCEDURE [dbo].[GetEmergencyProcurment]
 @UserID Varchar(50)
 AS
@@ -50,6 +57,9 @@ BEGIN
     LEFT JOIN Mst_Role ru3 ON u3.Role_ID = ru3.Role_ID
 
     WHERE i.Inward_Type = 'E'
-      AND i.Created_By = @UserID
-      AND i.Status != 'Approved'
+  AND i.Created_By = @UserID
+   AND (i.Purchase_Order IS NULL OR i.Purchase_Order = '')
+ --- AND i.Status != 'Approved'
+ 
+
 END;
