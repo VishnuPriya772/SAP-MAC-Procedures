@@ -15,19 +15,15 @@ BEGIN
         m.Rate, 
         m.Plant_ID, 
         m.Material_Type,
-		m.Active_Status,
-		m.Supv_ID,
-		 s.Sup_Code + ' - ' + s.Sup_Name AS Sup_Code,
-		s.Sup_Name
+	m.Active_Status,
+		
+		
     FROM 
         Mst_Material m
     INNER JOIN 
         Mst_Plant p 
     ON 
         m.Plant_ID = p.Plant_ID
-		 INNER JOIN 
-        Mst_SupvCode s
-    ON 
-        m.Supv_ID = s.Supv_ID
+		
     
 END;
