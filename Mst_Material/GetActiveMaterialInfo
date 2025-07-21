@@ -15,7 +15,7 @@ BEGIN
         m.Rate, 
         m.Plant_ID, 
         m.Material_Type,
-	m.Active_Status,
+	m.Active_Status
 		
 		
     FROM 
