@@ -1,10 +1,41 @@
-CREATE PROCEDURE Get_Pending_PO
+CREATE OR ALTER PROCEDURE Get_Pending_PO
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    SELECT *
-    FROM Trn_Inward_Old_Invoice
-    WHERE Inward_Type = 'E'
-      AND (Purchase_Order IS NULL OR LTRIM(RTRIM(Purchase_Order)) = '');
-END;
+    SELECT 
+        Inward_ID,
+        Vendor_ID,
+        Plant_ID,
+        Invoice_Date,
+        Invoice_No,
+        Invoice_Qty,
+        Invoice_Value,
+        Purchase_Order,
+        Material_Description,
+        Material_ID,
+        Monthly_Scheduled_Qty,
+        Current_Stock,
+        Reason_For_Delay,
+        Inward_Type,
+        Status,
+        Approver_1,
+        Approver_2,
+        Approver_3,
+        Approval1_Status,
+        Approval2_Status,
+        Approval3_Status,
+        Approver1_Comment,
+        Approver2_Comment,
+        Approver3_Comment,
+        Created_By,
+        Created_On,
+        Modified_By,
+        Modified_On
+    FROM 
+        Trn_Inward_Old_Invoice
+    WHERE 
+        Inward_Type = 'E'
+        AND (Purchase_Order IS NULL OR LTRIM(RTRIM(Purchase_Order)) = '')
+        AND Created_On <= DATEADD(DAY, -7, GETDATE())
+END
