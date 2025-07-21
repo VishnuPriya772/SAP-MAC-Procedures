@@ -1,41 +1,55 @@
-CREATE OR ALTER PROCEDURE Get_Pending_PO
+CREATE Or ALTER PROCEDURE Get_Pending_PO
 AS
 BEGIN
     SET NOCOUNT ON;
 
     SELECT 
-        Inward_ID,
-        Vendor_ID,
-        Plant_ID,
-        Invoice_Date,
-        Invoice_No,
-        Invoice_Qty,
-        Invoice_Value,
-        Purchase_Order,
-        Material_Description,
-        Material_ID,
-        Monthly_Scheduled_Qty,
-        Current_Stock,
-        Reason_For_Delay,
-        Inward_Type,
-        Status,
-        Approver_1,
-        Approver_2,
-        Approver_3,
-        Approval1_Status,
-        Approval2_Status,
-        Approval3_Status,
-        Approver1_Comment,
-        Approver2_Comment,
-        Approver3_Comment,
-        Created_By,
-        Created_On,
-        Modified_By,
-        Modified_On
-    FROM 
-        Trn_Inward_Old_Invoice
+        TI.Inward_ID,
+        V.Vendor_Name,
+        P.Plant_Code,
+        TI.Invoice_Date,
+        TI.Invoice_No,
+        TI.Invoice_Qty,
+        TI.Invoice_Value,
+        TI.Purchase_Order,
+        TI.Material_Description,
+        M.Material_Code,
+        TI.Monthly_Scheduled_Qty,
+        TI.Current_Stock,
+        TI.Reason_For_Delay,
+        TI.Inward_Type,
+        TI.Status,
+
+        A1.User_Name AS Approver1_Name,
+        A2.User_Name AS Approver2_Name,
+        A3.User_Name AS Approver3_Name,
+
+        TI.Approval1_Status,
+        TI.Approval2_Status,
+        TI.Approval3_Status,
+        TI.Approver1_Comment,
+        TI.Approver2_Comment,
+        TI.Approver3_Comment,
+
+        U.User_Name AS Created_By_Name,
+        U.Employee_ID AS Created_By_GenID,
+
+        TI.Created_On,
+        TI.Modified_By,
+        TI.Modified_On
+    FROM Trn_Inward_Old_Invoice TI
+    LEFT JOIN Mst_Vendor V ON TI.Vendor_ID = V.Vendor_ID
+    LEFT JOIN Mst_Plant P ON TI.Plant_ID = P.Plant_ID
+    LEFT JOIN Mst_Material M ON TI.Material_ID = M.Material_ID
+
+    LEFT JOIN Mst_User A1 ON TI.Approver_1 = A1.Employee_ID
+    LEFT JOIN Mst_User A2 ON TI.Approver_2 = A2.Employee_ID
+    LEFT JOIN Mst_User A3 ON TI.Approver_3 = A3.Employee_ID
+
+    LEFT JOIN Mst_User U ON TI.Created_By = U.User_ID
+
     WHERE 
-        Inward_Type = 'E'
-        AND (Purchase_Order IS NULL OR LTRIM(RTRIM(Purchase_Order)) = '')
-        AND Created_On <= DATEADD(DAY, -7, GETDATE())
+        TI.Inward_Type = 'E'
+        AND (TI.Purchase_Order IS NULL OR LTRIM(RTRIM(TI.Purchase_Order)) = '')
+        AND TI.Created_On <= DATEADD(DAY, -7, GETDATE())
 END
