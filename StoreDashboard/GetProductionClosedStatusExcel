@@ -1,5 +1,5 @@
 CREATE OR ALTER PROCEDURE [dbo].[GetProductionClosedStatusExcel]
-    @Sloc_Code VARCHAR(50) = NULL  -- Optional filter parameter
+    @Sloc_Code VARCHAR(50) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -17,12 +17,27 @@ BEGIN
 
         MAX(TP.Material_No) AS Material_No,
         MAX(TP.Material_Description) AS Material_Description,
-        MAX(TP.Order_Closed_Date) AS Order_Closed_Date,
-        MAX(TP.Order_Created_Date) AS Order_Created_Date,
-        MAX(TP.Supv_Lead_Time) AS Supv_Lead_Time,
+
+        -- ✅ Date format as ddmmyyyy
+        FORMAT(MAX(TP.Order_Created_Date), 'dd:MM:yyyy HH:mm') AS Order_Created_Date,
+FORMAT(MAX(TP.Order_Closed_Date), 'dd:MM:yyyy HH:mm') AS Order_Closed_Date,
+
+
+        -- Supv Lead Time as HH:MM
+        RIGHT('0' + CAST((MAX(TP.Supv_Lead_Time) / 60) AS VARCHAR), 2) + ':' +
+        RIGHT('0' + CAST((MAX(TP.Supv_Lead_Time) % 60) AS VARCHAR), 2) AS Supv_Lead_Time,
+
         MAX(TP.Order_Qty) AS Order_Qty,
         MAX(TP.Order_No) AS Order_No,
-		MAX(TP.Ontime_or_Delay) AS Ontime_or_Delay
+        UPPER(MAX(TP.Ontime_or_Delay)) AS Ontime_or_Delay,
+
+        -- Delay in minutes
+        MAX(DATEDIFF(MINUTE, TP.Order_Created_Date, TP.Order_Closed_Date) - TP.Supv_Lead_Time) AS DelayInMinutes,
+
+        -- Delay time formatted as HH:MM
+        RIGHT('0' + CAST((MAX(DATEDIFF(MINUTE, TP.Order_Created_Date, TP.Order_Closed_Date) - TP.Supv_Lead_Time) / 60) AS VARCHAR), 2)
+        + ':' +
+        RIGHT('0' + CAST((MAX(DATEDIFF(MINUTE, TP.Order_Created_Date, TP.Order_Closed_Date) - TP.Supv_Lead_Time) % 60) AS VARCHAR), 2) AS Delay_Time
 
     FROM Trn_prod_order_status TP
 
@@ -43,7 +58,7 @@ BEGIN
             OR
             (TP.Order_Type = 'New' AND CAST(TP.Created_On AS DATE) = CAST(GETDATE() AS DATE))
         )
-      AND (@Sloc_Code IS NULL OR OC.Sloc_Code = @Sloc_Code)
+        AND (@Sloc_Code IS NULL OR OC.Sloc_Code = @Sloc_Code)
 
     GROUP BY SC.Supv_ID, SC.Sup_Code, SC.Sup_Name;
 END;
