@@ -1,6 +1,6 @@
 USE [Sap_Approval]
 GO
-/****** Object:  StoredProcedure [dbo].[Sync_Prod_Order_Status]    Script Date: 16-07-2025 18:36:37 ******/
+/****** Object:  StoredProcedure [dbo].[Sync_Prod_Order_Status]    Script Date: 22-07-2025 12:05:52 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -63,9 +63,9 @@ BEGIN
         s.Issue_Duration_Time = DATEDIFF(MINUTE, s.Order_Created_Date, cl.OrderClosed_Date),
         s.Ontime_or_Delay = 
             CASE 
-                WHEN DATEDIFF(MINUTE, s.Order_Created_Date, cl.OrderClosed_Date) <= s.Supv_Lead_Time THEN 'g'
-                WHEN DATEDIFF(MINUTE, s.Order_Created_Date, cl.OrderClosed_Date) <= s.Supv_Lead_Time + 60 THEN 'y'
-                ELSE 'r'
+                WHEN DATEDIFF(MINUTE, s.Order_Created_Date, cl.OrderClosed_Date) <= s.Supv_Lead_Time THEN 'G'
+                WHEN DATEDIFF(MINUTE, s.Order_Created_Date, cl.OrderClosed_Date) <= s.Supv_Lead_Time + 60 THEN 'Y'
+                ELSE 'R'
             END
     FROM Trn_Prod_Order_Status s
     INNER JOIN TrnSap_Order_Closed cl 
