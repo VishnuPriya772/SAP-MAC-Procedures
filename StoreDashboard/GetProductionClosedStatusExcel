@@ -1,48 +1,25 @@
 CREATE OR ALTER PROCEDURE [dbo].[GetProductionClosedStatusExcel]
-    @Sloc_Code VARCHAR(50) = NULL
+    @Sloc_Code VARCHAR(50) = NULL,
+    @FromDate DATE = NULL,
+    @ToDate DATE = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
 
+    ---------------------------------
+    -- 1. Summary View (grouped)
+    ---------------------------------
     SELECT 
         SC.Supv_ID,
         CONCAT(SC.Sup_Code, ' - ', SC.Sup_Name) AS Sup_Name,
-
         COUNT(TP.Prdord_ID) AS [No_Of_Orders],
         COUNT(CASE WHEN TP.Order_Type = 'Closed' THEN 1 END) AS [No_Order_Close],
         COUNT(CASE WHEN TP.Order_Type = 'New' THEN 1 END) AS [No_Of_Open_Orders],
         COUNT(CASE WHEN TP.Ontime_or_Delay = 'g' THEN 1 END) AS [Issue_Posted_on_Time],
         COUNT(CASE WHEN TP.Ontime_or_Delay = 'y' THEN 1 END) AS [Issue_Posted_Delay60],
-        COUNT(CASE WHEN TP.Ontime_or_Delay = 'r' THEN 1 END) AS [Issue_Posted_Delay],
-
-        MAX(TP.Material_No) AS Material_No,
-        MAX(TP.Material_Description) AS Material_Description,
-
-        -- ✅ Date format as ddmmyyyy
-        FORMAT(MAX(TP.Order_Created_Date), 'dd:MM:yyyy HH:mm') AS Order_Created_Date,
-FORMAT(MAX(TP.Order_Closed_Date), 'dd:MM:yyyy HH:mm') AS Order_Closed_Date,
-
-
-        -- Supv Lead Time as HH:MM
-        RIGHT('0' + CAST((MAX(TP.Supv_Lead_Time) / 60) AS VARCHAR), 2) + ':' +
-        RIGHT('0' + CAST((MAX(TP.Supv_Lead_Time) % 60) AS VARCHAR), 2) AS Supv_Lead_Time,
-
-        MAX(TP.Order_Qty) AS Order_Qty,
-        MAX(TP.Order_No) AS Order_No,
-        UPPER(MAX(TP.Ontime_or_Delay)) AS Ontime_or_Delay,
-
-        -- Delay in minutes
-        MAX(DATEDIFF(MINUTE, TP.Order_Created_Date, TP.Order_Closed_Date) - TP.Supv_Lead_Time) AS DelayInMinutes,
-
-        -- Delay time formatted as HH:MM
-        RIGHT('0' + CAST((MAX(DATEDIFF(MINUTE, TP.Order_Created_Date, TP.Order_Closed_Date) - TP.Supv_Lead_Time) / 60) AS VARCHAR), 2)
-        + ':' +
-        RIGHT('0' + CAST((MAX(DATEDIFF(MINUTE, TP.Order_Created_Date, TP.Order_Closed_Date) - TP.Supv_Lead_Time) % 60) AS VARCHAR), 2) AS Delay_Time
-
+        COUNT(CASE WHEN TP.Ontime_or_Delay = 'r' THEN 1 END) AS [Issue_Posted_Delay]
     FROM Trn_prod_order_status TP
-
     LEFT JOIN Mst_SupvCode SC ON TP.Supv_ID = SC.Supv_ID
-
     LEFT JOIN (
         SELECT Order_No, Sloc_Code
         FROM (
@@ -51,14 +28,48 @@ FORMAT(MAX(TP.Order_Closed_Date), 'dd:MM:yyyy HH:mm') AS Order_Closed_Date,
         ) OC
         WHERE rn = 1
     ) OC ON TP.Order_No = OC.Order_No
-
-    WHERE 
+    WHERE
         (
-            (TP.Order_Type = 'Closed' AND CAST(TP.Order_Closed_Date AS DATE) = CAST(GETDATE() AS DATE))
+            (TP.Order_Type = 'Closed' AND CAST(TP.Order_Closed_Date AS DATE) BETWEEN @FromDate AND @ToDate)
             OR
-            (TP.Order_Type = 'New' AND CAST(TP.Created_On AS DATE) = CAST(GETDATE() AS DATE))
+            (TP.Order_Type = 'New' AND CAST(TP.Created_On AS DATE) BETWEEN @FromDate AND @ToDate)
         )
         AND (@Sloc_Code IS NULL OR OC.Sloc_Code = @Sloc_Code)
-
     GROUP BY SC.Supv_ID, SC.Sup_Code, SC.Sup_Name;
+
+    ---------------------------------
+    -- 2. Split View (raw details)
+    ---------------------------------
+    SELECT 
+        SC.Supv_ID,
+        CONCAT(SC.Sup_Code, ' - ', SC.Sup_Name) AS Sup_Name,
+        TP.Material_No,
+        TP.Material_Description,
+        FORMAT(TP.Order_Created_Date, 'dd:MM:yyyy HH:mm') AS Order_Created_Date,
+        FORMAT(TP.Order_Closed_Date, 'dd:MM:yyyy HH:mm') AS Order_Closed_Date,
+        RIGHT('0' + CAST((TP.Supv_Lead_Time / 60) AS VARCHAR), 2) + ':' + 
+        RIGHT('0' + CAST((TP.Supv_Lead_Time % 60) AS VARCHAR), 2) AS Supv_Lead_Time,
+        TP.Order_Qty,
+        TP.Order_No,
+        UPPER(TP.Ontime_or_Delay) AS Ontime_or_Delay,
+        DATEDIFF(MINUTE, TP.Order_Created_Date, TP.Order_Closed_Date) - TP.Supv_Lead_Time AS DelayInMinutes,
+        RIGHT('0' + CAST(((DATEDIFF(MINUTE, TP.Order_Created_Date, TP.Order_Closed_Date) - TP.Supv_Lead_Time) / 60) AS VARCHAR), 2) + ':' +
+        RIGHT('0' + CAST(((DATEDIFF(MINUTE, TP.Order_Created_Date, TP.Order_Closed_Date) - TP.Supv_Lead_Time) % 60) AS VARCHAR), 2) AS Delay_Time
+    FROM Trn_prod_order_status TP
+    LEFT JOIN Mst_SupvCode SC ON TP.Supv_ID = SC.Supv_ID
+    LEFT JOIN (
+        SELECT Order_No, Sloc_Code
+        FROM (
+            SELECT *, ROW_NUMBER() OVER (PARTITION BY Order_No ORDER BY Created_On DESC) AS rn
+            FROM TrnSap_Order_creation
+        ) OC
+        WHERE rn = 1
+    ) OC ON TP.Order_No = OC.Order_No
+    WHERE
+        (
+            (TP.Order_Type = 'Closed' AND CAST(TP.Order_Closed_Date AS DATE) BETWEEN @FromDate AND @ToDate)
+            OR
+            (TP.Order_Type = 'New' AND CAST(TP.Created_On AS DATE) BETWEEN @FromDate AND @ToDate)
+        )
+        AND (@Sloc_Code IS NULL OR OC.Sloc_Code = @Sloc_Code);
 END;
